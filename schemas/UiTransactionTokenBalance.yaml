@@ -1,0 +1,32 @@
+title: UiTransactionTokenBalance
+description: >-
+  An SPL token balance for one account, as recorded before or after a
+  transaction. `accountIndex` indexes the transaction's account key list and
+  `programId` is the owning token program (SPL Token or Token-2022). `owner`
+  and `programId` are omitted entirely — not null — when the recorded value
+  was empty.
+type: object
+required: [accountIndex, mint, uiTokenAmount]
+properties:
+  accountIndex: { $ref: '#/components/schemas/U8' }
+  mint: { $ref: '#/components/schemas/Pubkey' }
+  owner: { $ref: '#/components/schemas/Pubkey' }
+  programId: { $ref: '#/components/schemas/Pubkey' }
+  uiTokenAmount:
+    type: object
+    required: [amount, decimals, uiAmount, uiAmountString]
+    properties:
+      amount:
+        type: string
+        description: Raw amount as a u64 decimal string.
+      decimals: { $ref: '#/components/schemas/U8' }
+      uiAmount:
+        description: >-
+          DEPRECATED. Amount scaled by `decimals` as a float; null when the
+          value is not representable. Use `uiAmountString`.
+        oneOf:
+          - { type: number }
+          - type: 'null'
+      uiAmountString:
+        type: string
+        description: Amount scaled by `decimals`, rendered as a decimal string.

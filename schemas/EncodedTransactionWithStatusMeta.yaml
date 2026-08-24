@@ -1,0 +1,16 @@
+title: EncodedTransactionWithStatusMeta
+description: >-
+  A transaction and its status metadata, as returned inside a block. `meta`
+  is always serialized and is null only for very old transactions stored
+  without metadata. `version` is omitted when the request did not set
+  `maxSupportedTransactionVersion`, in which case only legacy transactions
+  can be returned at all.
+type: object
+required: [transaction, meta]
+properties:
+  transaction: { $ref: '#/components/schemas/EncodedTransaction' }
+  meta:
+    oneOf:
+      - $ref: '#/components/schemas/UiTransactionStatusMeta'
+      - type: 'null'
+  version: { $ref: '#/components/schemas/TransactionVersion' }

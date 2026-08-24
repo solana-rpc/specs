@@ -1,0 +1,17 @@
+title: TokenAccountsFilter
+description: >-
+  Selects token accounts either by mint or by token program. Exactly one of
+  the two forms.
+oneOf:
+  - title: ByMint
+    type: object
+    required: [mint]
+    additionalProperties: false
+    properties:
+      mint: { $ref: '#/components/schemas/Pubkey' }
+  - title: ByProgramId
+    type: object
+    required: [programId]
+    additionalProperties: false
+    properties:
+      programId: { $ref: '#/components/schemas/Pubkey' }

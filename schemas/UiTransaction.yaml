@@ -1,0 +1,9 @@
+title: UiTransaction
+description: A transaction in structured (json / jsonParsed) form.
+type: object
+required: [signatures, message]
+properties:
+  signatures:
+    type: array
+    items: { $ref: '#/components/schemas/Signature' }
+  message: { $ref: '#/components/schemas/UiMessage' }

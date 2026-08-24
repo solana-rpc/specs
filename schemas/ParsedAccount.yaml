@@ -1,0 +1,19 @@
+title: ParsedAccount
+description: >-
+  An account key with its resolved privileges, as returned under `jsonParsed`
+  encoding and by `transactionDetails: accounts`.
+type: object
+required: [pubkey, writable, signer, source]
+properties:
+  pubkey: { $ref: '#/components/schemas/Pubkey' }
+  writable: { type: boolean }
+  signer: { type: boolean }
+  source:
+    description: >-
+      Where the key came from: the transaction message itself, or an address
+      lookup table. Always serialized, null when the encoder did not resolve
+      a source.
+    oneOf:
+      - type: string
+        enum: [transaction, lookupTable]
+      - type: 'null'

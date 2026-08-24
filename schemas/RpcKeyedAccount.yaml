@@ -1,0 +1,7 @@
+title: RpcKeyedAccount
+description: An account paired with its address.
+type: object
+required: [pubkey, account]
+properties:
+  pubkey: { $ref: '#/components/schemas/Pubkey' }
+  account: { $ref: '#/components/schemas/UiAccount' }

@@ -1,0 +1,12 @@
+title: UiInnerInstructions
+description: >-
+  The cross-program instructions invoked by one top-level instruction,
+  identified by that instruction's index in the message.
+type: object
+required: [index, instructions]
+properties:
+  index:
+    $ref: '#/components/schemas/U8'
+  instructions:
+    type: array
+    items: { $ref: '#/components/schemas/UiInstruction' }

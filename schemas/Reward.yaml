@@ -1,0 +1,30 @@
+title: Reward
+description: >-
+  A lamport reward or penalty applied to one account in a block. `lamports`
+  is the delta (negative for a penalty) and `postBalance` the resulting
+  balance. `rewardType` and `commission` are always serialized and are null
+  when not applicable; `commissionBps` is omitted entirely when absent.
+type: object
+required: [pubkey, lamports, postBalance, rewardType, commission]
+properties:
+  pubkey: { $ref: '#/components/schemas/Pubkey' }
+  lamports: { $ref: '#/components/schemas/I64' }
+  postBalance: { $ref: '#/components/schemas/U64' }
+  rewardType:
+    oneOf:
+      - $ref: '#/components/schemas/RewardType'
+      - type: 'null'
+  commission:
+    description: >-
+      Vote account commission as a whole percent when the reward was
+      credited; only meaningful for `Voting` and `Staking` rewards.
+    oneOf:
+      - $ref: '#/components/schemas/U8'
+      - type: 'null'
+  commissionBps:
+    description: >-
+      Vote account commission in basis points (SIMD-0291). Omitted by nodes
+      and stored blocks that predate the field.
+    type: integer
+    minimum: 0
+    maximum: 65535

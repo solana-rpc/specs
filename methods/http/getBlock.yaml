@@ -1,0 +1,100 @@
+name: getBlock
+status: standard
+summary: Returns identity and transaction information about a confirmed block.
+params:
+  - name: slot
+    required: true
+    summary: Slot of the block to fetch.
+    schema: { $ref: '#/components/schemas/Slot' }
+  - name: config
+    required: false
+    summary: Configuration object, or a bare encoding string (deprecated).
+    schema:
+      oneOf:
+        - title: Config
+          type: object
+          properties:
+            commitment: { $ref: '#/components/schemas/CommitmentConfirmedFinalized' }
+            encoding: { $ref: '#/components/schemas/TransactionEncoding' }
+            transactionDetails:
+              type: string
+              enum: [full, accounts, signatures, none]
+              description: Level of transaction detail to return. Default `full`.
+            maxSupportedTransactionVersion:
+              description: >-
+                Highest transaction version the caller can decode. Omitting
+                it means only legacy transactions are acceptable.
+              allOf:
+                - $ref: '#/components/schemas/U8'
+            rewards:
+              type: boolean
+              description: Whether to populate the rewards array. Default true.
+        - title: DeprecatedEncoding
+          description: >-
+            A bare encoding string in place of the config object. Accepted by
+            the reference implementation for backwards compatibility; new
+            clients MUST send the object form.
+          allOf:
+            - $ref: '#/components/schemas/TransactionEncoding'
+result:
+  name: block
+  summary: The block, or null when the node has no block for the slot to report.
+  schema:
+    oneOf:
+      - $ref: '#/components/schemas/UiConfirmedBlock'
+      - type: 'null'
+        description: >-
+          The node could not produce a block for the slot and did not
+          classify the reason as one of the block errors below.
+errors:
+  - $ref: '#/components/errors/BlockNotAvailable'
+  - $ref: '#/components/errors/BlockStatusNotAvailableYet'
+  - $ref: '#/components/errors/SlotSkipped'
+  - $ref: '#/components/errors/LongTermStorageSlotSkipped'
+  - $ref: '#/components/errors/BlockCleanedUp'
+  - $ref: '#/components/errors/UnsupportedTransactionVersion'
+  - $ref: '#/components/errors/TransactionHistoryNotAvailable'
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: signaturesOnly
+    summary: "`transactionDetails: signatures` with rewards suppressed."
+    params:
+      - name: slot
+        value: 430
+      - name: config
+        value: { encoding: json, transactionDetails: signatures, rewards: false, maxSupportedTransactionVersion: 0 }
+    result:
+      name: block
+      value:
+        blockhash: "3Eq21vXNB5s86c62bVuUfTeaMif1N2kUqRPBmGRJhyTA"
+        previousBlockhash: "mfcyqEXB3DnHXki6KjjmZck6YjmZLvpAByy2fj4nh6B"
+        parentSlot: 429
+        blockTime: null
+        blockHeight: 428
+        signatures:
+          - "5nn4nQXXHRNCLzq8x2wR9tTn3GfnLiGf2ZFsAxvZUAMzhPnwzUxqzL9zeVQ1EFiXPSCE9HuVKZHs4kHzmmr3JTx"
+  - name: rewardsOnly
+    summary: "`transactionDetails: none` keeps the rewards array and drops both transaction members."
+    params:
+      - name: slot
+        value: 430
+      - name: config
+        value: { transactionDetails: none, maxSupportedTransactionVersion: 0 }
+    result:
+      name: block
+      value:
+        blockhash: "3Eq21vXNB5s86c62bVuUfTeaMif1N2kUqRPBmGRJhyTA"
+        previousBlockhash: "mfcyqEXB3DnHXki6KjjmZck6YjmZLvpAByy2fj4nh6B"
+        parentSlot: 429
+        blockTime: 1655374970
+        blockHeight: 428
+        rewards:
+          - pubkey: "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu"
+            lamports: -14
+            postBalance: 499999932500
+            rewardType: Rent
+            commission: null
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "strict unknown-config-field rejection; processed n/a; served from ClickHouse" }

@@ -1,0 +1,17 @@
+title: UiTransactionReturnData
+description: >-
+  Data returned by the last program that set return data during the
+  transaction. `data` is always a [data, encoding] tuple and the encoding is
+  always base64.
+type: object
+required: [programId, data]
+properties:
+  programId: { $ref: '#/components/schemas/Pubkey' }
+  data:
+    type: array
+    minItems: 2
+    maxItems: 2
+    items:
+      - type: string
+      - type: string
+        enum: [base64]

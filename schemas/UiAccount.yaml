@@ -1,0 +1,19 @@
+title: UiAccount
+description: An account, as returned by account-state RPC methods.
+type: object
+required: [lamports, data, owner, executable, rentEpoch]
+properties:
+  lamports: { $ref: '#/components/schemas/U64' }
+  data: { $ref: '#/components/schemas/UiAccountData' }
+  owner: { $ref: '#/components/schemas/Pubkey' }
+  executable: { type: boolean }
+  rentEpoch: { $ref: '#/components/schemas/U64' }
+  space:
+    description: >-
+      Length of the account's data in bytes, before any `dataSlice` is
+      applied. The reference implementation always emits this field, but it
+      is typed as an optional nullable because the underlying field is an
+      `Option<u64>` serialized without a skip attribute.
+    oneOf:
+      - $ref: '#/components/schemas/U64'
+      - type: 'null'

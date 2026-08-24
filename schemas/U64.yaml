@@ -1,0 +1,6 @@
+title: U64
+description: >-
+  Unsigned 64-bit integer. NOTE: values above 2^53-1 lose precision in most
+  JSON parsers; implementations serialize the full u64 anyway.
+type: integer
+minimum: 0

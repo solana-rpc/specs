@@ -1,0 +1,100 @@
+name: getTokenAccountsByOwner
+status: standard
+summary: Returns all SPL Token accounts owned by the given address.
+params:
+  - name: owner
+    required: true
+    summary: Address of the token account owner.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: filter
+    required: true
+    summary: Exactly one of `{ mint }` or `{ programId }`.
+    schema: { $ref: '#/components/schemas/TokenAccountsFilter' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        encoding: { $ref: '#/components/schemas/AccountEncoding' }
+        dataSlice: { $ref: '#/components/schemas/DataSlice' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: tokenAccounts
+  summary: Matching token accounts, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        type: array
+        items: { $ref: '#/components/schemas/RpcKeyedAccount' }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/KeyExcludedFromSecondaryIndex'
+  - $ref: '#/components/errors/ScanError'
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InvalidRequest'
+examples:
+  - name: byProgramId
+    summary: All SPL Token accounts of an owner, `jsonParsed`.
+    params:
+      - name: owner
+        value: "A1TMhSGzQxMr1TboBKtgixKz1sS6REASMxPo1qsyTSJd"
+      - name: filter
+        value: { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" }
+      - name: config
+        value: { encoding: jsonParsed }
+    result:
+      name: tokenAccounts
+      value:
+        context: { slot: 1114 }
+        value:
+          - pubkey: "C2gJg6tKpQs41PRS1nC8aw3ZKNZK3HQQZGVrDFDup5nx"
+            account:
+              lamports: 1726080
+              data:
+                program: spl-token
+                parsed:
+                  info:
+                    tokenAmount:
+                      amount: "1"
+                      decimals: 1
+                      uiAmount: 0.1
+                      uiAmountString: "0.1"
+                    delegate: "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T"
+                    delegatedAmount:
+                      amount: "1"
+                      decimals: 1
+                      uiAmount: 0.1
+                      uiAmountString: "0.1"
+                    state: initialized
+                    isNative: false
+                    mint: "3wyAj7Rt1TWvPZVadmJdGmmT94Vk8ovVmqgyaeUcPjKF"
+                    owner: "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T"
+                  type: account
+                space: 165
+              owner: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+              executable: false
+              rentEpoch: 4
+              space: 165
+  - name: byMintNoAccounts
+    summary: An owner with no accounts for the given mint returns an empty array.
+    params:
+      - name: owner
+        value: "A1TMhSGzQxMr1TboBKtgixKz1sS6REASMxPo1qsyTSJd"
+      - name: filter
+        value: { mint: "3wyAj7Rt1TWvPZVadmJdGmmT94Vk8ovVmqgyaeUcPjKF" }
+      - name: config
+        value: { encoding: jsonParsed, commitment: confirmed }
+    result:
+      name: tokenAccounts
+      value:
+        context: { slot: 250000123, apiVersion: "2.3.0" }
+        value: []
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "delegate byte-layout matching supports legacy SPL Token only for ByDelegate; programId filter restricted to SPL Token / Token-2022" }
+  superbank: { status: none }

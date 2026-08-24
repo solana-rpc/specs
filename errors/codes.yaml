@@ -1,0 +1,178 @@
+# Canonical Solana JSON-RPC error registry.
+# Codes -32700..-32600 are JSON-RPC 2.0 standard; -32000..-32099 are
+# implementation-defined per JSON-RPC and allocated here for Solana.
+# New codes MUST be added via the RFC process (see GOVERNANCE.md).
+#
+# Messages are verified against agave/rpc-client-api/src/custom_error.rs
+# (`impl From<RpcCustomError> for Error`). `{placeholder}` marks an
+# interpolated value; `data` is a JSON Schema for the error's `data` member,
+# present only where the reference implementation attaches one. `description`
+# is normative prose about the error; the compiler lifts it into
+# `x-solana-errors[<Name>].description` in dist/openrpc.json.
+#
+# `emittedBy` lists the methods that can raise the error. The five JSON-RPC 2.0
+# standard errors below (ParseError, InvalidRequest, MethodNotFound,
+# InvalidParams, InternalError) deliberately carry no `emittedBy`: they are
+# universal to every method and transport, so enumerating emitters for them
+# would mean listing the whole spec.
+
+ParseError:
+  code: -32700
+  message: Parse error
+InvalidRequest:
+  code: -32600
+  message: Invalid request
+MethodNotFound:
+  code: -32601
+  message: "Method not found"
+InvalidParams:
+  code: -32602
+  message: "Invalid params: {details}"
+InternalError:
+  code: -32603
+  message: Internal error
+
+BlockCleanedUp:
+  code: -32001
+  message: "Block {slot} cleaned up, does not exist on node. First available block: {first_available_block}"
+  emittedBy: [getBlock]
+SendTransactionPreflightFailure:
+  code: -32002
+  message: "Transaction simulation failed: {message}"
+  description: >-
+    Raised when a `sendTransaction` preflight simulation fails. `{message}` is a
+    verbatim pass-through of the simulation failure text produced by the
+    runtime — the RPC layer does not reformat or normalise it, so callers must
+    not pattern-match on its wording. `data` is an `RpcSimulateTransactionResult`
+    (the same shape `simulateTransaction` returns), carrying the failing
+    transaction's `err`, `logs`, `accounts`, `unitsConsumed`, and `returnData`.
+  data:
+    description: RpcSimulateTransactionResult
+    type: object
+  emittedBy: [sendTransaction]
+TransactionSignatureVerificationFailure:
+  code: -32003
+  message: Transaction signature verification failure
+  description: >-
+    Code collision warning: cloudbreak reuses -32003 with a different meaning —
+    it returns this code to signal that the requested `processed` commitment is
+    not supported. Consumers that dispatch on the numeric code alone must
+    account for both meanings; the implementation matrix on each method records
+    which behavior applies.
+BlockNotAvailable:
+  code: -32004
+  message: "Block not available for slot {slot}"
+  emittedBy: [getBlock]
+NodeUnhealthy:
+  code: -32005
+  message: Node is unhealthy
+  description: >-
+    The message has two forms. When the node cannot determine how far behind it
+    is, it is the literal "Node is unhealthy" above; when the distance is known,
+    it is instead "Node is behind by {numSlotsBehind} slots". `data` is always
+    attached in both forms, with `numSlotsBehind` set to null in the first.
+  data:
+    type: object
+    required: [numSlotsBehind]
+    properties:
+      numSlotsBehind:
+        oneOf:
+          - { $ref: '#/components/schemas/Slot' }
+          - { type: 'null' }
+  emittedBy: [getHealth]
+# `{error}` is the Debug rendering of the underlying TransactionError.
+TransactionPrecompileVerificationFailure:
+  code: -32006
+  message: "Transaction precompile verification failure {error}"
+SlotSkipped:
+  code: -32007
+  message: "Slot {slot} was skipped, or missing due to ledger jump to recent snapshot"
+  emittedBy: [getBlock]
+NoSnapshot:
+  code: -32008
+  message: No snapshot
+LongTermStorageSlotSkipped:
+  code: -32009
+  message: "Slot {slot} was skipped, or missing in long-term storage"
+  emittedBy: [getBlock]
+KeyExcludedFromSecondaryIndex:
+  code: -32010
+  message: "{index_key} excluded from account secondary indexes; this RPC method unavailable for key"
+  description: >-
+    Code collision warning: cloudbreak reuses -32010 with an additional meaning —
+    it returns this code both for a key excluded from a secondary index and to
+    signal that the requested account owner is excluded from what the node
+    indexes. Consumers that dispatch on the numeric code alone must account for
+    both meanings.
+  emittedBy: [getProgramAccounts, getTokenAccountsByOwner]
+TransactionHistoryNotAvailable:
+  code: -32011
+  message: Transaction history is not available from this node
+  emittedBy: [getBlock, getSignaturesForAddress, getTransaction]
+ScanError:
+  code: -32012
+  message: "{message}"
+  description: >-
+    An accounts-index scan failed or was aborted — typically because the bank
+    being scanned was cleaned up mid-scan, or the scan exceeded the node's
+    limits. The whole message is the underlying scan error rendered as a
+    string, with no fixed prefix.
+  emittedBy: [getProgramAccounts, getTokenAccountsByOwner, getTokenAccountsByDelegate, getLargestAccounts, getSupply]
+TransactionSignatureLenMismatch:
+  code: -32013
+  message: Transaction signature length mismatch
+BlockStatusNotAvailableYet:
+  code: -32014
+  message: "Block status not yet available for slot {slot}"
+  emittedBy: [getBlock]
+UnsupportedTransactionVersion:
+  code: -32015
+  message: >-
+    Transaction version ({version}) is not supported by the requesting client.
+    Please try the request again with the following configuration parameter:
+    "maxSupportedTransactionVersion": {version}
+  emittedBy: [getBlock, getTransaction]
+MinContextSlotNotReached:
+  code: -32016
+  message: Minimum context slot has not been reached
+  data:
+    type: object
+    required: [contextSlot]
+    properties:
+      contextSlot: { $ref: '#/components/schemas/Slot' }
+  emittedBy: [getBalance, getAccountInfo, getMultipleAccounts, getProgramAccounts, getTokenAccountsByOwner, getLatestBlockhash, getSlot, getBlockHeight, getSignaturesForAddress]
+EpochRewardsPeriodActive:
+  code: -32017
+  message: "Epoch rewards period still active at slot {slot}"
+  description: >-
+    The `slot` field of `data` is present only from Agave 3.0 onwards; older
+    nodes omit it entirely, so consumers must treat it as optional.
+  data:
+    type: object
+    required: [currentBlockHeight, rewardsCompleteBlockHeight]
+    properties:
+      currentBlockHeight: { $ref: '#/components/schemas/U64' }
+      rewardsCompleteBlockHeight: { $ref: '#/components/schemas/U64' }
+      slot:
+        oneOf:
+          - { $ref: '#/components/schemas/Slot' }
+          - { type: 'null' }
+SlotNotEpochBoundary:
+  code: -32018
+  message: "Rewards cannot be found because slot {slot} is not the epoch boundary. This may be due to gap in the queried node's local ledger or long-term storage"
+  data:
+    type: object
+    required: [slot]
+    properties:
+      slot: { $ref: '#/components/schemas/Slot' }
+LongTermStorageUnreachable:
+  code: -32019
+  message: Failed to query long-term storage; please try again
+  emittedBy: [getSignaturesForAddress]
+FilterTransactionNotFound:
+  code: -32020
+  message: "Transaction {signature} not found"
+  emittedBy: [getSignaturesForAddress]
+NoSlotHistory:
+  code: -32021
+  message: No slot history

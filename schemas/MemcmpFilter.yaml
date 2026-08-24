@@ -1,0 +1,28 @@
+title: MemcmpFilter
+description: >-
+  Matches accounts whose data at `offset` equals `bytes`. `bytes` is base58
+  by default; set `encoding` to `base64` for base64 comparison data. `bytes`
+  may also be given as a raw array of byte values, in which case `encoding`
+  is ignored. The comparison data must decode to at most 128 bytes.
+type: object
+required: [memcmp]
+properties:
+  memcmp:
+    type: object
+    required: [offset, bytes]
+    properties:
+      offset: { type: integer, minimum: 0 }
+      bytes:
+        oneOf:
+          - type: string
+          - title: RawBytes
+            description: Raw byte values; `encoding` is ignored for this form.
+            type: array
+            items: { $ref: '#/components/schemas/U8' }
+      encoding:
+        description: >-
+          Encoding of a string `bytes`. Defaults to `base58`. The legacy
+          value `bytes` is accepted and treated as `base58` when `bytes` is a
+          string.
+        type: string
+        enum: [base58, base64, bytes]

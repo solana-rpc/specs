@@ -1,0 +1,4 @@
+title: Signature
+description: A transaction signature, base58-encoded 64-byte ed25519 signature.
+type: string
+pattern: '^[1-9A-HJ-NP-Za-km-z]{64,88}$'

@@ -1,0 +1,86 @@
+name: accountSubscribe
+status: standard
+summary: Subscribe to changes of the account at the given address.
+params:
+  - name: pubkey
+    required: true
+    summary: Address of the account to watch.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: >-
+      Configuration object. Same wire type as `getAccountInfo`'s config
+      (`RpcAccountInfoConfig`), so `dataSlice` and `minContextSlot` are
+      accepted here too — see the description for how each is treated.
+    schema:
+      type: object
+      properties:
+        commitment:
+          $ref: '#/components/schemas/Commitment'
+        encoding:
+          $ref: '#/components/schemas/AccountEncoding'
+        dataSlice:
+          allOf:
+            - $ref: '#/components/schemas/DataSlice'
+          description: >-
+            Accepted and part of the subscription's identity, but NOT applied
+            to notification payloads by the reference implementation — every
+            notification carries the account's full data.
+        minContextSlot:
+          allOf:
+            - $ref: '#/components/schemas/Slot'
+          description: Accepted and silently ignored; subscriptions have no context floor.
+result:
+  name: subscriptionId
+  summary: Subscription id — pass to `accountUnsubscribe` to cancel.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: basic
+    summary: Watch an account, base64-encoded, at `finalized`.
+    params:
+      - name: pubkey
+        value: "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12"
+      - name: config
+        value: { encoding: base64, commitment: finalized }
+    result:
+      name: subscriptionId
+      value: 23784
+  - name: noConfig
+    summary: >-
+      Config omitted: commitment defaults to `finalized` and encoding to the
+      legacy `binary` (bare base58 string) form.
+    params:
+      - name: pubkey
+        value: "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12"
+    result:
+      name: subscriptionId
+      value: 0
+notification:
+  name: accountNotification
+  description: >-
+    Sent whenever the subscribed account is modified in a slot that reaches
+    the requested commitment. The payload is a JSON-RPC notification whose
+    params are { result: RpcResponse<UiAccount>, subscription: <id> }.
+    `context` carries only `slot`; the reference implementation never sets
+    `apiVersion` on notifications.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription:
+        allOf:
+          - $ref: '#/components/schemas/U64'
+        description: The id returned by `accountSubscribe`.
+      result:
+        type: object
+        required: [context, value]
+        properties:
+          context: { $ref: '#/components/schemas/RpcResponseContext' }
+          value: { $ref: '#/components/schemas/UiAccount' }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }

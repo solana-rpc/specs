@@ -1,0 +1,8 @@
+title: MessageHeader
+description: Signature and read-only account counts for a transaction message.
+type: object
+required: [numRequiredSignatures, numReadonlySignedAccounts, numReadonlyUnsignedAccounts]
+properties:
+  numRequiredSignatures: { $ref: '#/components/schemas/U8' }
+  numReadonlySignedAccounts: { $ref: '#/components/schemas/U8' }
+  numReadonlyUnsignedAccounts: { $ref: '#/components/schemas/U8' }

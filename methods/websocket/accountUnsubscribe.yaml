@@ -1,0 +1,27 @@
+name: accountUnsubscribe
+status: standard
+summary: Cancel an account-change subscription.
+params:
+  - name: subscriptionId
+    required: true
+    summary: The id returned by the `accountSubscribe` call being cancelled.
+    schema: { $ref: '#/components/schemas/U64' }
+result:
+  name: success
+  summary: Always `true`; an id the connection does not hold errors instead.
+  schema: { type: boolean }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: basic
+    summary: Cancel the subscription returned by the `accountSubscribe` example.
+    params:
+      - name: subscriptionId
+        value: 23784
+    result:
+      name: success
+      value: true
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }

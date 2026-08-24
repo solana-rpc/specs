@@ -1,0 +1,99 @@
+name: getProgramAccounts
+status: standard
+summary: Returns all accounts owned by the given program.
+params:
+  - name: programId
+    required: true
+    summary: Address of the owning program.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        encoding: { $ref: '#/components/schemas/AccountEncoding' }
+        dataSlice: { $ref: '#/components/schemas/DataSlice' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+        withContext:
+          type: boolean
+          description: Wrap the result in an RpcResponse context envelope. Default false.
+        filters:
+          type: array
+          maxItems: 4
+          items: { $ref: '#/components/schemas/GpaFilter' }
+        sortResults:
+          type: boolean
+          description: Sort results by pubkey before returning. Default true in Agave.
+result:
+  name: accounts
+  summary: Matching accounts, bare or context-wrapped depending on `withContext`.
+  schema:
+    oneOf:
+      - title: WithoutContext
+        description: Returned when `withContext` is absent or false.
+        type: array
+        items: { $ref: '#/components/schemas/RpcKeyedAccount' }
+      - title: WithContext
+        description: Returned when `withContext` is true.
+        type: object
+        required: [context, value]
+        properties:
+          context: { $ref: '#/components/schemas/RpcResponseContext' }
+          value:
+            type: array
+            items: { $ref: '#/components/schemas/RpcKeyedAccount' }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/KeyExcludedFromSecondaryIndex'
+  - $ref: '#/components/errors/ScanError'
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InvalidRequest'
+examples:
+  - name: withDataSizeFilter
+    summary: Two ANDed filters, default (bare array) result shape.
+    params:
+      - name: programId
+        value: "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T"
+      - name: config
+        value:
+          encoding: base58
+          filters:
+            - { dataSize: 17 }
+            - { memcmp: { offset: 4, bytes: "3Mc6vR" } }
+    result:
+      name: accounts
+      value:
+        - pubkey: "CxELquR1gPP8wHe33gZ4QxqGB3sZ9RSwsJ2KshVewkFY"
+          account:
+            lamports: 15298080
+            data: ["2R9jLfiAQ9bgdcw6h8s44439", base58]
+            owner: "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T"
+            executable: false
+            rentEpoch: 28
+            space: 17
+  - name: withContext
+    summary: "The same query with `withContext: true` returns the envelope variant."
+    params:
+      - name: programId
+        value: "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T"
+      - name: config
+        value: { encoding: base64, withContext: true }
+    result:
+      name: accounts
+      value:
+        context: { slot: 250000123, apiVersion: "2.3.0" }
+        value:
+          - pubkey: "GjwcWFQYzemBtpUoN5fMAP2FZviTtMRWCmrppGuTthJS"
+            account:
+              lamports: 15298080
+              data: ["AQAAAB3xJyRlQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", base64]
+              owner: "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T"
+              executable: false
+              rentEpoch: 28
+              space: 42
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "sortResults ignored; token-program gPA restricted; minContextSlot only enforced with withContext:true" }
+  superbank: { status: none }

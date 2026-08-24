@@ -1,0 +1,55 @@
+name: getBalance
+status: standard
+summary: Returns the lamport balance of the account at the given address.
+params:
+  - name: pubkey
+    required: true
+    summary: Address of the account to query.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: balance
+  summary: Lamport balance, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: basic
+    summary: Balance of an account that does not exist.
+    params:
+      - name: pubkey
+        value: "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri"
+    result:
+      name: balance
+      value:
+        context: { slot: 1, apiVersion: "2.3.0" }
+        value: 0
+  - name: funded-account-at-confirmed
+    summary: Funded account read at `confirmed` with a minimum context slot.
+    params:
+      - name: pubkey
+        value: "vines1vzrYbzLMRdu58ou5XTby4qAqVRLmqo36NKPTg"
+      - name: config
+        value: { commitment: confirmed, minContextSlot: 250000000 }
+    result:
+      name: balance
+      value:
+        context: { slot: 250000123, apiVersion: "2.3.0" }
+        value: 1500000000
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "processed commitment rejected or downgraded; error if account owner not indexed" }
+  superbank: { status: none }

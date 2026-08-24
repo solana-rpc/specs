@@ -1,0 +1,6 @@
+title: CommitmentConfirmedFinalized
+description: >-
+  Commitment level restricted to `confirmed` or `finalized`. Methods using
+  this type reject `processed` with InvalidParams (-32602).
+type: string
+enum: [confirmed, finalized]

@@ -1,0 +1,14 @@
+title: UiAccountsList
+description: >-
+  The reduced transaction form returned when a block is requested with
+  `transactionDetails: accounts`: signatures plus the resolved account keys,
+  with no message body or instructions.
+type: object
+required: [signatures, accountKeys]
+properties:
+  signatures:
+    type: array
+    items: { $ref: '#/components/schemas/Signature' }
+  accountKeys:
+    type: array
+    items: { $ref: '#/components/schemas/ParsedAccount' }

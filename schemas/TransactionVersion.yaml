@@ -1,0 +1,8 @@
+title: TransactionVersion
+description: >-
+  Transaction version — the string "legacy" or a numbered version (0 for
+  address-lookup-table transactions, 1 for SIMD-0385 transactions).
+oneOf:
+  - type: string
+    enum: [legacy]
+  - $ref: '#/components/schemas/U8'

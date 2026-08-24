@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tooling
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tooling/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run validate
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openrpc
+          path: dist/openrpc.json
+
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    # Job-level `permissions` replaces the top-level block outright rather than
+    # merging with it, so `contents: read` has to be repeated here or checkout
+    # loses read access to the repo.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Pages allows one deployment at a time; queue rather than cancel so a
+    # merge train never drops the newest artifact.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tooling/package-lock.json
+      - run: npm ci
+        working-directory: tooling
+      - run: npm run build
+        working-directory: tooling
+      - run: cp tooling/static/index.html dist/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

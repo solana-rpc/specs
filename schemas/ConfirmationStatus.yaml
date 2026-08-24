@@ -1,0 +1,6 @@
+title: ConfirmationStatus
+description: >-
+  How far a transaction has progressed towards finality. Serialized from
+  Agave's TransactionConfirmationStatus.
+type: string
+enum: [processed, confirmed, finalized]

@@ -1,0 +1,29 @@
+title: UiParsedMessage
+description: >-
+  Message body under `jsonParsed` encoding: account keys carry resolved
+  privileges and instructions are parsed where a program parser exists.
+  Distinguished from `UiRawMessage` by the object-shaped `accountKeys`
+  entries and the absence of `header`.
+type: object
+required: [accountKeys, recentBlockhash, instructions]
+properties:
+  accountKeys:
+    type: array
+    items: { $ref: '#/components/schemas/ParsedAccount' }
+  recentBlockhash: { $ref: '#/components/schemas/Hash' }
+  instructions:
+    type: array
+    items: { $ref: '#/components/schemas/UiInstruction' }
+  addressTableLookups:
+    description: >-
+      Present for v0 messages encoded with their status meta; omitted for
+      legacy and v1 messages. May also be null.
+    oneOf:
+      - type: array
+        items: { $ref: '#/components/schemas/UiAddressTableLookup' }
+      - type: 'null'
+  transactionConfig:
+    description: Present for v1 (SIMD-0385) messages; omitted otherwise.
+    oneOf:
+      - $ref: '#/components/schemas/UiTransactionConfig'
+      - type: 'null'

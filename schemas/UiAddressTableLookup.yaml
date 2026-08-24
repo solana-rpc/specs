@@ -1,0 +1,14 @@
+title: UiAddressTableLookup
+description: >-
+  An address lookup table referenced by a versioned (v0) message, with the
+  table indexes it loads as writable and readonly.
+type: object
+required: [accountKey, writableIndexes, readonlyIndexes]
+properties:
+  accountKey: { $ref: '#/components/schemas/Pubkey' }
+  writableIndexes:
+    type: array
+    items: { $ref: '#/components/schemas/U8' }
+  readonlyIndexes:
+    type: array
+    items: { $ref: '#/components/schemas/U8' }

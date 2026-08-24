@@ -1,0 +1,10 @@
+title: TransactionEncoding
+description: >-
+  Encoding for returned transactions. `json` (default) and `jsonParsed`
+  return structured objects; `base58` and `base64` return the serialized
+  transaction as a [data, encoding] tuple. `binary` is a deprecated legacy
+  spelling that the reference implementation still accepts: it is the only
+  encoding that produces the bare base58 string form of
+  `EncodedTransaction`, rather than a tuple. New clients MUST NOT use it.
+type: string
+enum: [json, jsonParsed, base58, base64, binary]

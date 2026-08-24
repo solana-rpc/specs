@@ -1,0 +1,37 @@
+name: getSlot
+status: standard
+summary: Returns the slot that has reached the given or default commitment level.
+params:
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: slot
+  summary: Current slot at the requested commitment. Bare integer, no context envelope.
+  schema: { $ref: '#/components/schemas/Slot' }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+examples:
+  - name: basic
+    summary: Default (`finalized`) commitment.
+    params: []
+    result:
+      name: slot
+      value: 1234
+  - name: processed-commitment
+    summary: Most recent slot the node has processed.
+    params:
+      - name: config
+        value: { commitment: processed }
+    result:
+      name: slot
+      value: 1236
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "processed rejected/downgraded; slot read from Postgres, not bank state" }
+  superbank: { status: partial, notes: "processed requires grpc-head-cache build + config; slot derived from ClickHouse" }

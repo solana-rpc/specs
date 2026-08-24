@@ -1,0 +1,5 @@
+title: U32
+description: Unsigned 32-bit integer.
+type: integer
+minimum: 0
+maximum: 4294967295

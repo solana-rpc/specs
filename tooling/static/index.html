@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solana JSON-RPC Specification</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 4rem auto; padding: 0 1rem; line-height: 1.6; }
+    code { background: #f2f2f2; padding: 0.1em 0.3em; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Solana JSON-RPC Specification</h1>
+  <p>Canonical machine-readable spec: <a href="./openrpc.json"><code>openrpc.json</code></a> (OpenRPC 1.2.6, JSON Schema types).</p>
+  <p><a id="playground" href="#">Open in the OpenRPC Playground</a></p>
+  <p>Sources, prose semantics, and the RFC process live in the
+     <a href="https://github.com/solana-rpc/specs">solana-rpc/specs</a> repository.</p>
+  <script>
+    const spec = new URL('./openrpc.json', location.href).href
+    document.getElementById('playground').href =
+      'https://playground.open-rpc.org/?url=' + encodeURIComponent(spec)
+  </script>
+</body>
+</html>

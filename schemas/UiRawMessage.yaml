@@ -1,0 +1,30 @@
+title: UiRawMessage
+description: >-
+  Message body under `json` encoding: account keys are a flat list of
+  addresses and instructions reference them by index. `recentBlockhash` is
+  the message's lifetime specifier — for a durable-nonce transaction it is
+  the stored nonce rather than a recent blockhash.
+type: object
+required: [header, accountKeys, recentBlockhash, instructions]
+properties:
+  header: { $ref: '#/components/schemas/MessageHeader' }
+  accountKeys:
+    type: array
+    items: { $ref: '#/components/schemas/Pubkey' }
+  recentBlockhash: { $ref: '#/components/schemas/Hash' }
+  instructions:
+    type: array
+    items: { $ref: '#/components/schemas/UiCompiledInstruction' }
+  addressTableLookups:
+    description: >-
+      Present for v0 messages; omitted for legacy and v1 messages. May also
+      be null.
+    oneOf:
+      - type: array
+        items: { $ref: '#/components/schemas/UiAddressTableLookup' }
+      - type: 'null'
+  transactionConfig:
+    description: Present for v1 (SIMD-0385) messages; omitted otherwise.
+    oneOf:
+      - $ref: '#/components/schemas/UiTransactionConfig'
+      - type: 'null'

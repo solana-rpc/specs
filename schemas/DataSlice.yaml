@@ -1,0 +1,12 @@
+title: DataSlice
+description: >-
+  Limits returned account data to `length` bytes starting at `offset`.
+  Applied under the `base58`, `binary`, `base64`, and `base64+zstd`
+  encodings. Under `jsonParsed` it is ignored for parsed data, but is
+  applied when the request falls back to the base64 form because no parser
+  exists for the owner program. Supplying it never causes an error.
+type: object
+required: [offset, length]
+properties:
+  offset: { type: integer, minimum: 0 }
+  length: { type: integer, minimum: 0 }

@@ -1,0 +1,8 @@
+title: UiMessage
+description: >-
+  A transaction message in one of two wire forms, selected by the request's
+  `encoding`. The forms are untagged: `json` yields `UiRawMessage`,
+  `jsonParsed` yields `UiParsedMessage`.
+oneOf:
+  - $ref: '#/components/schemas/UiRawMessage'
+  - $ref: '#/components/schemas/UiParsedMessage'

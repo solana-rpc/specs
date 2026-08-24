@@ -1,0 +1,20 @@
+title: TransactionError
+description: >-
+  A failed transaction's error. Serialized from Agave's TransactionError
+  enum: unit variants serialize as a bare string; variants with fields
+  serialize as a single-key object. `InstructionError` is the special case —
+  it serializes as {"InstructionError": [instructionIndex, InstructionError]},
+  where the inner InstructionError follows the same string-or-single-key-object
+  rule. The canonical variant list lives in solana-transaction-error; this
+  schema intentionally validates loosely and enumerates only structure, not
+  every variant. Tightening it is tracked as a follow-up proposal.
+oneOf:
+  - type: string
+    description: A unit variant, e.g. "AccountNotFound", "AlreadyProcessed".
+  - type: object
+    description: >-
+      A variant with data, e.g. {"InstructionError": [0, {"Custom": 1}]} or
+      {"InsufficientFundsForRent": {"account_index": 2}}. Note that struct
+      variants keep their Rust snake_case field names.
+    minProperties: 1
+    maxProperties: 1

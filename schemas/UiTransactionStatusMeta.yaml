@@ -1,0 +1,93 @@
+title: UiTransactionStatusMeta
+description: >-
+  Transaction status metadata. Three states are distinguishable on the wire
+  and consumers MUST tolerate all of them: a value, an explicit `null`, and
+  the member being absent. `err`, `status`, `fee`, `preBalances` and
+  `postBalances` are always present. `innerInstructions`, `logMessages`,
+  `preTokenBalances`, `postTokenBalances` and `rewards` are serialized as
+  null when unavailable — including `rewards` when the block was requested
+  with `rewards: false`, which nulls the member rather than dropping it.
+  `loadedAddresses`, `returnData`, `computeUnitsConsumed` and `costUnits` are
+  omitted rather than nulled when unavailable, and `loadedAddresses` is
+  additionally omitted under `jsonParsed` encoding, where the loaded
+  addresses are already folded into `message.accountKeys`. Under
+  `transactionDetails: accounts` the metadata is reduced: `innerInstructions`
+  and `logMessages` are omitted too, `rewards` is omitted (rather than
+  nulled) when `rewards: false` was requested, and `preTokenBalances` /
+  `postTokenBalances` keep their normal value-or-null behaviour.
+type: object
+required: [err, status, fee, preBalances, postBalances]
+properties:
+  err:
+    description: null when the transaction succeeded.
+    oneOf:
+      - $ref: '#/components/schemas/TransactionError'
+      - type: 'null'
+  status:
+    description: >-
+      DEPRECATED duplicate of `err`, serialized as the Rust Result: `{"Ok":
+      null}` on success, `{"Err": TransactionError}` on failure. Always
+      emitted by the reference implementation; use `err` instead.
+    oneOf:
+      - title: Ok
+        type: object
+        required: [Ok]
+        properties:
+          Ok: { type: 'null' }
+      - title: Err
+        type: object
+        required: [Err]
+        properties:
+          Err: { $ref: '#/components/schemas/TransactionError' }
+  fee:
+    $ref: '#/components/schemas/U64'
+  preBalances:
+    description: Lamport balance of every account before the transaction.
+    type: array
+    items: { $ref: '#/components/schemas/U64' }
+  postBalances:
+    description: Lamport balance of every account after the transaction.
+    type: array
+    items: { $ref: '#/components/schemas/U64' }
+  innerInstructions:
+    oneOf:
+      - type: array
+        items: { $ref: '#/components/schemas/UiInnerInstructions' }
+      - type: 'null'
+  logMessages:
+    oneOf:
+      - type: array
+        items: { type: string }
+      - type: 'null'
+  preTokenBalances:
+    oneOf:
+      - type: array
+        items: { $ref: '#/components/schemas/UiTransactionTokenBalance' }
+      - type: 'null'
+  postTokenBalances:
+    oneOf:
+      - type: array
+        items: { $ref: '#/components/schemas/UiTransactionTokenBalance' }
+      - type: 'null'
+  rewards:
+    oneOf:
+      - type: array
+        items: { $ref: '#/components/schemas/Reward' }
+      - type: 'null'
+  loadedAddresses:
+    oneOf:
+      - $ref: '#/components/schemas/UiLoadedAddresses'
+      - type: 'null'
+  returnData:
+    oneOf:
+      - $ref: '#/components/schemas/UiTransactionReturnData'
+      - type: 'null'
+  computeUnitsConsumed:
+    oneOf:
+      - $ref: '#/components/schemas/U64'
+      - type: 'null'
+  costUnits:
+    description: Cost-model units charged to the block for this transaction.
+    oneOf:
+      - $ref: '#/components/schemas/U64'
+      - type: 'null'

@@ -1,0 +1,24 @@
+title: UiTransactionConfig
+description: >-
+  Inline transaction configuration carried by v1 messages (SIMD-0385),
+  replacing the compute-budget instructions used by legacy and v0 messages.
+  Present only for version 1 transactions; every member is nullable.
+type: object
+required: [priorityFee, computeUnitLimit, loadedAccountsDataSizeLimit, heapSize]
+properties:
+  priorityFee:
+    oneOf:
+      - $ref: '#/components/schemas/U64'
+      - type: 'null'
+  computeUnitLimit:
+    oneOf:
+      - $ref: '#/components/schemas/U32'
+      - type: 'null'
+  loadedAccountsDataSizeLimit:
+    oneOf:
+      - $ref: '#/components/schemas/U32'
+      - type: 'null'
+  heapSize:
+    oneOf:
+      - $ref: '#/components/schemas/U32'
+      - type: 'null'

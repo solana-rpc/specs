@@ -1,0 +1,13 @@
+title: GpaFilter
+description: >-
+  A getProgramAccounts filter. Filters are ANDed; the reference
+  implementation accepts at most 4 per request.
+oneOf:
+  - $ref: '#/components/schemas/MemcmpFilter'
+  - $ref: '#/components/schemas/DataSizeFilter'
+  - title: TokenAccountState
+    description: >-
+      Matches accounts that deserialize as an initialized SPL Token account.
+      Serialized as the bare string `tokenAccountState`.
+    type: string
+    enum: [tokenAccountState]

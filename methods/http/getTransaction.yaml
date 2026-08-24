@@ -1,0 +1,106 @@
+name: getTransaction
+status: standard
+summary: Returns transaction details for a confirmed transaction signature.
+params:
+  - name: signature
+    required: true
+    summary: Transaction signature to look up.
+    schema: { $ref: '#/components/schemas/Signature' }
+  - name: config
+    required: false
+    summary: Configuration object, or a bare encoding string (deprecated).
+    schema:
+      oneOf:
+        - title: Config
+          type: object
+          properties:
+            commitment: { $ref: '#/components/schemas/CommitmentConfirmedFinalized' }
+            encoding: { $ref: '#/components/schemas/TransactionEncoding' }
+            maxSupportedTransactionVersion:
+              description: >-
+                Highest transaction version the caller can decode. Omitting
+                it means only legacy transactions are acceptable.
+              allOf:
+                - $ref: '#/components/schemas/U8'
+        - title: DeprecatedEncoding
+          description: >-
+            A bare encoding string in place of the config object. Accepted by
+            the reference implementation for backwards compatibility; new
+            clients MUST send the object form.
+          allOf:
+            - $ref: '#/components/schemas/TransactionEncoding'
+result:
+  name: transaction
+  summary: The transaction with its status metadata, or null when not found.
+  schema:
+    oneOf:
+      - title: ConfirmedTransaction
+        type: object
+        required: [slot, transaction, meta, blockTime]
+        properties:
+          slot: { $ref: '#/components/schemas/Slot' }
+          transaction: { $ref: '#/components/schemas/EncodedTransaction' }
+          meta:
+            oneOf:
+              - $ref: '#/components/schemas/UiTransactionStatusMeta'
+              - type: 'null'
+          version: { $ref: '#/components/schemas/TransactionVersion' }
+          blockTime:
+            description: Estimated production time as a Unix timestamp in seconds.
+            oneOf:
+              - $ref: '#/components/schemas/I64'
+              - type: 'null'
+          transactionIndex:
+            description: >-
+              Position of the transaction within its block. Omitted by nodes
+              and storage backends that do not record it.
+            allOf:
+              - $ref: '#/components/schemas/U32'
+      - type: 'null'
+        description: Transaction not found or not yet at the requested commitment.
+errors:
+  - $ref: '#/components/errors/UnsupportedTransactionVersion'
+  - $ref: '#/components/errors/TransactionHistoryNotAvailable'
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: base64Encoded
+    summary: A legacy transaction returned as a base64 tuple.
+    params:
+      - name: signature
+        value: "2nBhEBYYvfaAe16UMNqRHre4YNSskvuYgx3M6E4JP1oDYvZEJHvoPzyUidNgNX5r9sTyN1J9UxtbCXy2rqYcuyuv"
+      - name: config
+        value: { encoding: base64, maxSupportedTransactionVersion: 0 }
+    result:
+      name: transaction
+      value:
+        slot: 430
+        blockTime: null
+        version: legacy
+        transaction:
+          - "AVj7dxHlQ9IrvdYVIjuiRFs1jLaDMHixgrv+qtHBwz51L4/ImLZhszwiyEJDIp7xeBSpm/TX5B7mYzxa+fPOMw0BAAMFJMJVqLw+hJYheizSoYlLm53KzgT82cDVmazarqQKG2GQsLgiqktA+a+FDR4/7xnDX7rsusMwryYVUdixfz1B1Qan1RcZLwqvxvJl4/t3zHragsUp0L47E24tAFUgAAAABqfVFxjHdMkoVmOYaR1etoteuKObS21cc1VbIQAAAAAHYUgdNXR0u3xNdiTr072z2DVec9EQQ/wNo1OAAAAAAAtxOUhPBp2WSjUNJEgfvy70BbxI00fZyEPvFHNfxrtEAQQEAQIDADUCAAAAAQAAAAAAAACtAQAAAAAAAAdUE18R96XTJCe+YfRfUp6WP+YKCy/72ucOL8AoBFSpAA=="
+          - base64
+        meta:
+          err: null
+          status: { Ok: null }
+          fee: 5000
+          preBalances: [1110663066, 1, 1, 1, 1040000000]
+          postBalances: [1110658066, 1, 1, 1, 1040000000]
+          innerInstructions: []
+          logMessages: []
+          preTokenBalances: []
+          postTokenBalances: []
+          rewards: null
+          loadedAddresses: { writable: [], readonly: [] }
+          computeUnitsConsumed: 2366
+  - name: notFound
+    summary: An unknown signature is a null result, not an error.
+    params:
+      - name: signature
+        value: "4uQeVj5tqViQh7yWWGStvkEG1Zmhx6uasJtWCJziofM1B2K7ES8j1HTBLkQvS1zVGXRPKKzWZ3jMVYXwJDEmvBtY"
+    result:
+      name: transaction
+      value: null
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "strict config-field rejection; extra non-standard slot param exists but is not part of this spec" }

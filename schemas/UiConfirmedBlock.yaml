@@ -1,0 +1,43 @@
+title: UiConfirmedBlock
+description: >-
+  A confirmed block. Which of `transactions` / `signatures` is present
+  depends on the request's `transactionDetails`; `rewards` presence depends
+  on the `rewards` config flag. Absent members are omitted, not nulled —
+  except `blockTime` and `blockHeight`, which are always serialized and are
+  null when the node cannot determine them.
+type: object
+required: [previousBlockhash, blockhash, parentSlot, blockTime, blockHeight]
+properties:
+  previousBlockhash: { $ref: '#/components/schemas/Hash' }
+  blockhash: { $ref: '#/components/schemas/Hash' }
+  parentSlot: { $ref: '#/components/schemas/Slot' }
+  transactions:
+    description: Present when transactionDetails is `full` or `accounts`.
+    type: array
+    items: { $ref: '#/components/schemas/EncodedTransactionWithStatusMeta' }
+  signatures:
+    description: Present when transactionDetails is `signatures`.
+    type: array
+    items: { $ref: '#/components/schemas/Signature' }
+  rewards:
+    description: "Present unless the request set `rewards: false`."
+    type: array
+    items: { $ref: '#/components/schemas/Reward' }
+  numRewardPartitions:
+    description: >-
+      Number of partitions the epoch's stake rewards were distributed over
+      (SIMD-0118). Present only on epoch-boundary blocks that carry
+      partitioned rewards.
+    oneOf:
+      - $ref: '#/components/schemas/U64'
+      - type: 'null'
+  blockTime:
+    description: Estimated production time as a Unix timestamp in seconds.
+    oneOf:
+      - $ref: '#/components/schemas/I64'
+      - type: 'null'
+  blockHeight:
+    description: Number of blocks beneath this block.
+    oneOf:
+      - $ref: '#/components/schemas/U64'
+      - type: 'null'

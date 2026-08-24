@@ -1,0 +1,9 @@
+title: RewardType
+description: >-
+  Kind of reward credited to an account. Agave's RewardType enum carries no
+  serde rename, so the wire values are the Rust variant names in PascalCase,
+  not the lowercase strings the `Display` impl renders. `DeactivatedStake`
+  has a historical producer spelling, `deactivated-stake`, which some
+  ingestion paths accept on input but which is not emitted.
+type: string
+enum: [Fee, Rent, Staking, Voting, DeactivatedStake]

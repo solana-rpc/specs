@@ -1,0 +1,22 @@
+title: UiCompiledInstruction
+description: >-
+  An instruction as it appears under `json` encoding: account references are
+  indexes into the message's account key list.
+type: object
+required: [programIdIndex, accounts, data, stackHeight]
+properties:
+  programIdIndex: { $ref: '#/components/schemas/U8' }
+  accounts:
+    description: Indexes into the message account key list.
+    type: array
+    items: { $ref: '#/components/schemas/U8' }
+  data:
+    type: string
+    description: Base58-encoded instruction data.
+  stackHeight:
+    description: >-
+      Invocation stack height; 1 for top-level instructions, higher for
+      inner (CPI) instructions. Always serialized, null when unknown.
+    oneOf:
+      - $ref: '#/components/schemas/U32'
+      - type: 'null'

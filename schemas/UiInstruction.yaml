@@ -1,0 +1,40 @@
+title: UiInstruction
+description: >-
+  An instruction in an encoded message. Under `json` encoding this is always
+  the compiled form. Under `jsonParsed` it is either fully parsed by a
+  program parser, or partially decoded (explicit addresses, opaque data) when
+  no parser exists for the program. The variants are distinguished by their
+  required fields, not by a tag.
+oneOf:
+  - $ref: '#/components/schemas/UiCompiledInstruction'
+  - title: PartiallyDecoded
+    description: No parser exists for the program; addresses are resolved but data is not.
+    type: object
+    required: [programId, accounts, data, stackHeight]
+    properties:
+      programId: { $ref: '#/components/schemas/Pubkey' }
+      accounts:
+        type: array
+        items: { $ref: '#/components/schemas/Pubkey' }
+      data:
+        type: string
+        description: Base58-encoded instruction data.
+      stackHeight:
+        oneOf:
+          - $ref: '#/components/schemas/U32'
+          - type: 'null'
+  - title: Parsed
+    description: Produced by the owning program's parser.
+    type: object
+    required: [program, programId, parsed, stackHeight]
+    properties:
+      program:
+        type: string
+        description: Name of the program parser (e.g. `spl-token`, `system`).
+      programId: { $ref: '#/components/schemas/Pubkey' }
+      parsed:
+        description: Parser-specific JSON representation of the instruction.
+      stackHeight:
+        oneOf:
+          - $ref: '#/components/schemas/U32'
+          - type: 'null'

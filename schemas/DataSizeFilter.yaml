@@ -1,0 +1,6 @@
+title: DataSizeFilter
+description: Matches accounts whose data length equals `dataSize` bytes.
+type: object
+required: [dataSize]
+properties:
+  dataSize: { $ref: '#/components/schemas/U64' }

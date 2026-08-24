@@ -1,0 +1,4 @@
+title: Slot
+description: A slot number (u64).
+type: integer
+minimum: 0

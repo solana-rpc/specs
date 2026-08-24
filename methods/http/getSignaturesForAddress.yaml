@@ -1,0 +1,124 @@
+name: getSignaturesForAddress
+status: standard
+summary: >-
+  Returns signatures for confirmed transactions that include the given
+  address in their accountKeys list, newest first.
+params:
+  - name: address
+    required: true
+    summary: Account address to search for.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/CommitmentConfirmedFinalized' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          description: Maximum signatures to return (default 1000).
+        before:
+          description: >-
+            Start searching backwards from this signature, exclusive. If not
+            provided, search starts from the top of the highest max confirmed
+            block.
+          allOf:
+            - $ref: '#/components/schemas/Signature'
+        until:
+          description: Search until this signature, exclusive, if found before `limit` is reached.
+          allOf:
+            - $ref: '#/components/schemas/Signature'
+result:
+  name: signatures
+  summary: Matching transaction signatures, ordered newest first.
+  schema:
+    type: array
+    items:
+      type: object
+      required: [signature, slot, err, memo, blockTime, confirmationStatus]
+      properties:
+        signature: { $ref: '#/components/schemas/Signature' }
+        slot: { $ref: '#/components/schemas/Slot' }
+        err:
+          description: null when the transaction succeeded.
+          oneOf:
+            - $ref: '#/components/schemas/TransactionError'
+            - type: 'null'
+        memo:
+          description: >-
+            The transaction's SPL Memo content, rendered as
+            "[byteLength] content" and joined with "; " when the transaction
+            carried several memos; null when it carried none.
+          oneOf:
+            - { type: string }
+            - type: 'null'
+        blockTime:
+          oneOf:
+            - $ref: '#/components/schemas/I64'
+            - type: 'null'
+        confirmationStatus:
+          oneOf:
+            - $ref: '#/components/schemas/ConfirmationStatus'
+            - type: 'null'
+        transactionIndex:
+          description: >-
+            Position of the transaction within its block. Omitted by nodes
+            and storage backends that do not record it.
+          allOf:
+            - $ref: '#/components/schemas/U32'
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/FilterTransactionNotFound'
+  - $ref: '#/components/errors/LongTermStorageUnreachable'
+  - $ref: '#/components/errors/TransactionHistoryNotAvailable'
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: limited
+    summary: A single most-recent signature for the vote program.
+    params:
+      - name: address
+        value: "Vote111111111111111111111111111111111111111"
+      - name: config
+        value: { limit: 1 }
+    result:
+      name: signatures
+      value:
+        - signature: "5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv"
+          slot: 114
+          err: null
+          memo: null
+          blockTime: null
+          confirmationStatus: finalized
+  - name: paginated
+    summary: The next page, walking backwards from the signature above.
+    params:
+      - name: address
+        value: "Vote111111111111111111111111111111111111111"
+      - name: config
+        value:
+          limit: 2
+          before: "5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv"
+          commitment: finalized
+    result:
+      name: signatures
+      value:
+        - signature: "4Ku4a4tGXKtLmVzc8f9JS4mCVpjcnFmLYCLYNvMwBvkPRWA1zVwPz5FvBQTn9BqfE4TSaLLnDvNhZ1Kv1rzYYGKW"
+          slot: 113
+          err: null
+          memo: "[12] hello, world"
+          blockTime: 1655374970
+          confirmationStatus: finalized
+        - signature: "3Vk9BmyMKMLBLdmQd7fs2mZLwLK6yvBEsAqRK4gZfXAjTfYyeCLTQ9pVAyRmY8sJ2QxRJmCUvXvBmXMdEeCezFvj"
+          slot: 112
+          err: { InstructionError: [0, { Custom: 1 }] }
+          memo: null
+          blockTime: 1655374969
+          confirmationStatus: finalized
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: full, notes: "default/max limit env-tunable (default 1000); vendor beforeSlot/untilSlot params not specced here" }

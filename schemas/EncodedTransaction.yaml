@@ -1,0 +1,24 @@
+title: EncodedTransaction
+description: >-
+  A transaction in the wire form selected by the request's `encoding` and, in
+  a block, by `transactionDetails`: a bare base58 string for the legacy
+  `binary` encoding, a [data, encoding] tuple for `base58`/`base64`, a
+  structured object for `json`/`jsonParsed`, or an accounts list for
+  `transactionDetails: accounts`. The forms are untagged.
+oneOf:
+  - title: LegacyBinary
+    description: >-
+      Base58-encoded serialized transaction as a bare string, produced by the
+      deprecated `binary` encoding.
+    type: string
+  - title: Binary
+    description: "[serialized transaction, encoding] tuple (base58 or base64)."
+    type: array
+    minItems: 2
+    maxItems: 2
+    items:
+      - type: string
+      - type: string
+        enum: [base58, base64]
+  - $ref: '#/components/schemas/UiTransaction'
+  - $ref: '#/components/schemas/UiAccountsList'

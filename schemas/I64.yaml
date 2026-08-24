@@ -1,0 +1,3 @@
+title: I64
+description: Signed 64-bit integer (e.g. Unix timestamps, reward deltas).
+type: integer

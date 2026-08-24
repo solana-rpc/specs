@@ -1,0 +1,7 @@
+title: Commitment
+description: >-
+  Commitment level. `processed` = the node's most recent slot; `confirmed` =
+  optimistically confirmed by a supermajority; `finalized` = rooted. When a
+  method's config omits commitment, the default is `finalized`.
+type: string
+enum: [processed, confirmed, finalized]

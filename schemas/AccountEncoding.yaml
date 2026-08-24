@@ -1,0 +1,13 @@
+title: AccountEncoding
+description: >-
+  Encoding for returned account data. `base58` is limited to data of 128
+  bytes or less and is slow; `base64` for any size; `base64+zstd` compresses
+  with Zstandard before base64; `jsonParsed` uses program-specific parsers
+  and falls back to base64 when no parser exists. `binary` is the legacy
+  base58 form: accepted on the wire, the implicit default for
+  `getAccountInfo`, `getProgramAccounts`, and `getTokenAccountsByOwner`, and
+  the only encoding that yields the bare-string `UiAccountData` variant
+  rather than a `[data, encoding]` tuple. It carries the same 128-byte limit
+  as `base58`.
+type: string
+enum: [binary, base58, base64, base64+zstd, jsonParsed]

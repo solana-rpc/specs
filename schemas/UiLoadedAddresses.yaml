@@ -1,0 +1,13 @@
+title: UiLoadedAddresses
+description: >-
+  Addresses loaded from address lookup tables by a versioned transaction,
+  split by privilege. Both lists are empty for legacy transactions.
+type: object
+required: [writable, readonly]
+properties:
+  writable:
+    type: array
+    items: { $ref: '#/components/schemas/Pubkey' }
+  readonly:
+    type: array
+    items: { $ref: '#/components/schemas/Pubkey' }

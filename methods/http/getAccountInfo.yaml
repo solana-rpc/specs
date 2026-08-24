@@ -1,0 +1,68 @@
+name: getAccountInfo
+status: standard
+summary: Returns all information associated with the account at the given address.
+params:
+  - name: pubkey
+    required: true
+    summary: Address of the account to query.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        encoding: { $ref: '#/components/schemas/AccountEncoding' }
+        dataSlice: { $ref: '#/components/schemas/DataSlice' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: accountInfo
+  summary: The account, or `null`, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        oneOf:
+          - $ref: '#/components/schemas/UiAccount'
+          - type: 'null'
+            description: The account does not exist.
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InvalidRequest'
+examples:
+  - name: base58Encoded
+    summary: An existing account requested with `base58` encoding.
+    params:
+      - name: pubkey
+        value: "vines1vzrYbzLMRdu58ou5XTby4qAqVRLmqo36NKPTg"
+      - name: config
+        value: { encoding: base58 }
+    result:
+      name: accountInfo
+      value:
+        context: { slot: 100, apiVersion: "2.3.0" }
+        value:
+          lamports: 1000000000
+          data: ["11116bv5nS2h3y12kD1yUKeMZvGcKLSjQgX6BeV7u1FrjeJcKfsHPXHRDEHrBesJhZyqnnq9qJeUuF7WHxiuLuL5twc38w2TXNLxnDbjmuR", base58]
+          owner: "11111111111111111111111111111111"
+          executable: false
+          rentEpoch: 18446744073709551615
+          space: 80
+  - name: missingAccount
+    summary: "An account that does not exist returns `value: null`, not an error."
+    params:
+      - name: pubkey
+        value: "5oNDL3swdJJF1g9DzJiZ4ynHXgszjAEpUkxVYejchzrY"
+    result:
+      name: accountInfo
+      value:
+        context: { slot: 100 }
+        value: null
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "processed rejected/downgraded; default encoding binary (base58)" }
+  superbank: { status: none }

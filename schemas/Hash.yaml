@@ -1,0 +1,4 @@
+title: Hash
+description: A base58-encoded 32-byte hash (e.g. a blockhash).
+type: string
+pattern: '^[1-9A-HJ-NP-Za-km-z]{32,44}$'

@@ -1,0 +1,66 @@
+name: getMultipleAccounts
+status: standard
+summary: Returns account information for a list of addresses.
+params:
+  - name: pubkeys
+    required: true
+    summary: Addresses of the accounts to query, at most 100.
+    schema:
+      type: array
+      maxItems: 100
+      items: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        encoding: { $ref: '#/components/schemas/AccountEncoding' }
+        dataSlice: { $ref: '#/components/schemas/DataSlice' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: accounts
+  summary: One entry per requested address, in request order, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        type: array
+        items:
+          oneOf:
+            - $ref: '#/components/schemas/UiAccount'
+            - type: 'null'
+              description: The account at the corresponding request index does not exist.
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InvalidRequest'
+examples:
+  - name: twoAccountsOneMissing
+    summary: Two addresses; the second account does not exist and comes back as `null`.
+    params:
+      - name: pubkeys
+        value:
+          - "vines1vzrYbzLMRdu58ou5XTby4qAqVRLmqo36NKPTg"
+          - "5oNDL3swdJJF1g9DzJiZ4ynHXgszjAEpUkxVYejchzrY"
+      - name: config
+        value: { encoding: base64 }
+    result:
+      name: accounts
+      value:
+        context: { slot: 100, apiVersion: "2.3.0" }
+        value:
+          - lamports: 1000000000
+            data: ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", base64]
+            owner: "11111111111111111111111111111111"
+            executable: false
+            rentEpoch: 18446744073709551615
+            space: 80
+          - null
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "cap configurable via max-multiple-accounts (default 100); default encoding base64" }
+  superbank: { status: none }

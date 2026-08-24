@@ -1,0 +1,9 @@
+title: Solana JSON-RPC API
+version: 0.1.0
+license:
+  name: MIT
+  url: https://opensource.org/license/mit/
+description: >-
+  Implementation-independent specification of the Solana JSON-RPC API.
+  Compiled from per-method sources in methods/ — do not edit the compiled
+  artifact; see CONTRIBUTING.md.

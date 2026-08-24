@@ -1,0 +1,33 @@
+title: UiAccountData
+description: >-
+  Account data in one of three wire forms, selected by the request's
+  `encoding` param. (1) Legacy binary: a bare base58 string, produced by the
+  `binary` encoding — which is also the default for `getAccountInfo` and
+  `getProgramAccounts`. (2) A two-element [data, encoding] tuple, produced by
+  `base58`, `base64`, and `base64+zstd`. (3) A jsonParsed object; when no
+  parser exists for the owner program, implementations fall back to the
+  base64 tuple form.
+oneOf:
+  - title: LegacyBinary
+    description: Base58-encoded data as a bare string (legacy `binary` form).
+    type: string
+  - title: EncodedTuple
+    description: "[data, encoding] tuple."
+    type: array
+    minItems: 2
+    maxItems: 2
+    items:
+      - type: string
+      - type: string
+        enum: [base58, base64, base64+zstd]
+  - title: JsonParsed
+    type: object
+    required: [program, parsed, space]
+    properties:
+      program:
+        type: string
+        description: Name of the owning program's parser (e.g. `spl-token`).
+      parsed:
+        description: Parser-specific JSON representation of the account data.
+      space:
+        $ref: '#/components/schemas/U64'

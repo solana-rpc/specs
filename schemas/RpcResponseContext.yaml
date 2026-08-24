@@ -1,0 +1,10 @@
+title: RpcResponseContext
+description: >-
+  Context object included in RpcResponse-enveloped results. `slot` is the
+  slot at which the state was read; `apiVersion` is the serving node's
+  software version string.
+type: object
+required: [slot]
+properties:
+  slot: { $ref: '#/components/schemas/Slot' }
+  apiVersion: { type: string }

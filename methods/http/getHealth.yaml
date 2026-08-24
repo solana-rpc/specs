@@ -1,0 +1,23 @@
+name: getHealth
+status: standard
+summary: Returns the health status of the serving node.
+params: []
+result:
+  name: health
+  summary: The literal string `ok`; an unhealthy node returns an error instead.
+  schema:
+    type: string
+    enum: [ok]
+errors:
+  - $ref: '#/components/errors/NodeUnhealthy'
+examples:
+  - name: healthy
+    summary: Node is within the configured slot distance of the cluster tip.
+    params: []
+    result:
+      name: health
+      value: ok
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "health flag from service_health table, not cluster-tip distance" }
+  superbank: { status: partial, notes: "ok iff a latest finalized slot resolves from ClickHouse; numSlotsBehind always null" }

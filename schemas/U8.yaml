@@ -1,0 +1,4 @@
+title: U8
+type: integer
+minimum: 0
+maximum: 255
