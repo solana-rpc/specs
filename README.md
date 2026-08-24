@@ -12,8 +12,8 @@ are NOT specced here — they enter the standard via the RFC process
 
 Deviations are recorded per method, but one is cross-cutting and worth knowing
 up front: **cloudbreak does not reproduce Agave's error payloads.** Its
-JSON-RPC `message` field carries an opaque SCREAMING_SNAKE_CASE token (e.g.
-`PROCESSED_COMMITMENT_NOT_SUPPORTED`) rather than Agave's interpolated prose,
+JSON-RPC `message` field carries an opaque SNAKE_CASE token (e.g.
+`PROCESSED_COMMITMENT_NOT_SUPPORTED`) rather than Agave's interpolated message,
 and its error `data` is always `null` — even for codes where this spec
 documents a `data` schema. Clients that parse Agave's message text or read
 `data` fields must special-case cloudbreak.
@@ -68,8 +68,7 @@ npm test           # tooling unit tests
 ## Status
 
 Seeded with a representative subset of methods. Remaining Agave HTTP methods
-and WebSocket subscriptions are being backfilled — see open issues/PRs.
-The design rationale lives in `docs/design/2026-08-21-rpc-spec-repo-design.md`.
+and WebSocket subscriptions are being backfilled.
 
 ## License
 
