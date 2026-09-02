@@ -10,5 +10,4 @@ Returns the lowest slot for which the node has ledger information. The result is
 
 ## Implementation notes
 
-- **superbank** reports the lowest slot in its ClickHouse-backed block storage. This is a retention-floor approximation, not an exact view of Agave's validator blockstore metadata. It returns `null` when the storage is empty.
-- **cloudbreak** does not serve the method.
+- [**Superbank**](../../implementations/superbank.md): reports the lowest slot in its ClickHouse-backed block storage. This is a retention-floor approximation, not an exact view of Agave's validator blockstore metadata. It returns `null` when the storage is empty.
