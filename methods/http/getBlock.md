@@ -105,14 +105,14 @@ The reference implementation ignores unknown members of the config object.
 
 ## Implementation notes
 
-- **superbank**: serves the method from ClickHouse rather than a blockstore.
+- [**Superbank**](../../implementations/superbank.md): serves the method from ClickHouse rather than a blockstore.
   - **Rejects unknown config fields** with -32602, where Agave ignores them.
     The accepted set is exactly `encoding`, `transactionDetails`, `rewards`,
     `commitment`, `maxSupportedTransactionVersion`.
-  - Rejects `processed` with -32602 (and a `requestedCommitment` member in
-    the error `data`, which Agave does not send). Builds compiled with the
-    `grpc-head-cache` feature and running with the head cache enabled accept
-    `processed` as a vendor extension beyond this spec.
+  - Rejects `processed` with -32602, as required by this method. The error
+    includes a `requestedCommitment` member in `data`, which Agave does not
+    send. The optional gRPC head cache does not enable `processed` for
+    `getBlock`.
   - Supports transaction v1 (SIMD-0385): a request must send
     `maxSupportedTransactionVersion: 1`, JSON encodings then report
     `version: 1` and expose the inline `message.transactionConfig`, and binary
@@ -123,4 +123,3 @@ The reference implementation ignores unknown members of the config object.
   - Accepts both `DeactivatedStake` and the historical producer spelling
     `deactivated-stake` on ingest, and emits the typed `DeactivatedStake`
     value.
-- **cloudbreak**: method not served (account-state RPC only).
