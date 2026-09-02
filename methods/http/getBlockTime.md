@@ -10,5 +10,4 @@ Returns the estimated Unix timestamp, in seconds, for the block at `slot`. The r
 
 ## Implementation notes
 
-- **superbank** reads block metadata from ClickHouse. A stored block with no timestamp returns `null`, but a missing or skipped slot returns `LongTermStorageSlotSkipped` (-32009) rather than `null`.
-- **cloudbreak** does not serve the method.
+- [**Superbank**](../../implementations/superbank.md): reads block metadata from ClickHouse. A stored block with no timestamp returns `null`, but a missing or skipped slot returns `LongTermStorageSlotSkipped` (-32009) rather than `null`.
