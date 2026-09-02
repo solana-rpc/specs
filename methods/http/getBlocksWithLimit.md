@@ -10,5 +10,4 @@ Returns up to `limit` slots with blocks, starting at `startSlot`. The result is 
 
 ## Implementation notes
 
-- **superbank** reads slot metadata from ClickHouse. It rejects `processed` unless the optional gRPC head cache is enabled, and does not accept `minContextSlot`.
-- **cloudbreak** does not serve the method.
+- [**Superbank**](../../implementations/superbank.md): reads slot metadata from ClickHouse. It rejects `processed` unless the optional gRPC head cache is enabled, and does not accept `minContextSlot`.
