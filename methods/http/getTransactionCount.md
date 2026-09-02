@@ -11,5 +11,4 @@ Returns the cumulative number of transactions processed by the bank at the reque
 
 ## Implementation notes
 
-- **superbank**: derives the count from ClickHouse-stored blocks. It supports `confirmed` and `finalized`; `processed` requires the optional gRPC head cache. It rejects unknown config members with `InvalidParams`, while Agave ignores unknown serde fields.
-- **cloudbreak**: method not served.
+- [**Superbank**](../../implementations/superbank.md): derives the count from ClickHouse-stored blocks. It supports `confirmed` and `finalized`; `processed` requires the optional gRPC head cache. It rejects unknown config members with `InvalidParams`, while Agave ignores unknown serde fields.
