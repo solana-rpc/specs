@@ -1,0 +1,19 @@
+name: getFirstAvailableBlock
+status: standard
+summary: Returns the lowest block slot available from the node.
+params: []
+result:
+  name: slot
+  summary: Lowest slot for which the node can provide block data.
+  schema: { $ref: '#/components/schemas/Slot' }
+examples:
+  - name: first-available-block
+    summary: Return the oldest block that the node retains.
+    params: []
+    result:
+      name: slot
+      value: 5
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "returns null while ClickHouse has no block metadata; otherwise reports the oldest stored block" }
