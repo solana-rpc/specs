@@ -17,6 +17,8 @@ position in the block. The cursor pair walks backwards in time:
   transaction the node can serve at the requested commitment.
 - `until` — stop when this signature is reached. It too is **excluded**, and
   it is only honoured if reached before `limit` entries have been collected.
+- `beforeSlot` — start below this slot. The slot is **excluded**, so every returned entry has `slot < beforeSlot`. It is mutually exclusive with `before`.
+- `untilSlot` — stop above this slot. The slot is **excluded**, so every returned entry has `slot > untilSlot`. It is mutually exclusive with `until`.
 - `limit` — at most this many entries; default and maximum 1000. Values of `0`
   or above 1000 are `InvalidParams` (-32602), message
   `Invalid limit; max 1000`.
@@ -26,6 +28,8 @@ page and pass it as `before` on the next call. A short page — fewer than
 `limit` entries — means the node has no more matching transactions in range,
 not necessarily that the account has no older history: it may simply be beyond
 this node's retention.
+
+Slot cursors are whole-slot boundaries. They do not identify a transaction within a slot and cannot replace signature cursors when a caller needs to continue inside a slot. A request containing both `before` and `beforeSlot`, or both `until` and `untilSlot`, is invalid and returns `InvalidParams` (-32602).
 
 Both cursors must be signatures the node can locate. A `before` or `until`
 signature the node cannot find yields `FilterTransactionNotFound` (-32020),
@@ -79,6 +83,6 @@ node with transaction history disabled entirely fails every call with
   - Rejects `limit: 0` with -32602 (matching Agave), but **clamps** a limit
     above the maximum instead of erroring, where Agave rejects it. The default
     and maximum limit are env-tunable; the shipped default is 1000.
-  - Offers vendor `beforeSlot` / `untilSlot` slot cursors alongside the
-    signature cursors. They are outside this spec.
+  - Supports the standard `beforeSlot` / `untilSlot` slot cursors and rejects a slot cursor combined with its corresponding signature cursor.
+- **Agave**: does not implement the slot cursor members.
 - **cloudbreak**: method not served (account-state RPC only).
