@@ -35,7 +35,7 @@ InternalError:
 BlockCleanedUp:
   code: -32001
   message: "Block {slot} cleaned up, does not exist on node. First available block: {first_available_block}"
-  emittedBy: [getBlock]
+  emittedBy: [getBlock, getInflationReward]
 SendTransactionPreflightFailure:
   code: -32002
   message: "Transaction simulation failed: {message}"
@@ -62,7 +62,7 @@ TransactionSignatureVerificationFailure:
 BlockNotAvailable:
   code: -32004
   message: "Block not available for slot {slot}"
-  emittedBy: [getBlock]
+  emittedBy: [getBlock, getInflationReward]
 NodeUnhealthy:
   code: -32005
   message: Node is unhealthy
@@ -140,7 +140,7 @@ MinContextSlotNotReached:
     required: [contextSlot]
     properties:
       contextSlot: { $ref: '#/components/schemas/Slot' }
-  emittedBy: [getBalance, getAccountInfo, getMultipleAccounts, getProgramAccounts, getTokenAccountsByOwner, getLatestBlockhash, getSlot, getBlockHeight, getSignaturesForAddress]
+  emittedBy: [getBalance, getAccountInfo, getMultipleAccounts, getProgramAccounts, getTokenAccountsByOwner, getLatestBlockhash, getSlot, getBlockHeight, getSignaturesForAddress, getInflationReward]
 EpochRewardsPeriodActive:
   code: -32017
   message: "Epoch rewards period still active at slot {slot}"
@@ -157,6 +157,7 @@ EpochRewardsPeriodActive:
         oneOf:
           - { $ref: '#/components/schemas/Slot' }
           - { type: 'null' }
+  emittedBy: [getInflationReward]
 SlotNotEpochBoundary:
   code: -32018
   message: "Rewards cannot be found because slot {slot} is not the epoch boundary. This may be due to gap in the queried node's local ledger or long-term storage"
@@ -165,6 +166,7 @@ SlotNotEpochBoundary:
     required: [slot]
     properties:
       slot: { $ref: '#/components/schemas/Slot' }
+  emittedBy: [getInflationReward]
 LongTermStorageUnreachable:
   code: -32019
   message: Failed to query long-term storage; please try again

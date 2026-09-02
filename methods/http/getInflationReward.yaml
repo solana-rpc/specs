@@ -1,0 +1,87 @@
+name: getInflationReward
+status: standard
+summary: Returns inflation and staking rewards credited to the supplied addresses for an epoch.
+params:
+  - name: addresses
+    required: true
+    summary: Addresses to query, as base-58 encoded public keys.
+    schema:
+      type: array
+      items: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Configuration object for commitment, epoch, and minimum context slot.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        epoch: { $ref: '#/components/schemas/U64' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: rewards
+  summary: One reward object, or null, for each supplied address in input order.
+  schema:
+    type: array
+    items:
+      oneOf:
+        - title: InflationReward
+          type: object
+          required: [epoch, effectiveSlot, amount, postBalance, commission]
+          properties:
+            epoch: { $ref: '#/components/schemas/U64' }
+            effectiveSlot: { $ref: '#/components/schemas/Slot' }
+            amount: { $ref: '#/components/schemas/U64' }
+            postBalance: { $ref: '#/components/schemas/U64' }
+            commission:
+              description: Vote-account commission as a whole percent, or null when not applicable.
+              oneOf:
+                - $ref: '#/components/schemas/U8'
+                - type: 'null'
+            commissionBps:
+              description: Vote-account commission in basis points when supplied by the implementation.
+              type: integer
+              minimum: 0
+              maximum: 65535
+        - title: NoReward
+          type: 'null'
+          description: No reward data is available for the corresponding address.
+errors:
+  - $ref: '#/components/errors/BlockNotAvailable'
+  - $ref: '#/components/errors/BlockCleanedUp'
+  - $ref: '#/components/errors/SlotNotEpochBoundary'
+  - $ref: '#/components/errors/EpochRewardsPeriodActive'
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: epoch-rewards
+    summary: Query two addresses for rewards from a completed epoch.
+    params:
+      - name: addresses
+        value:
+          - "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu"
+          - "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
+      - name: config
+        value: { epoch: 800, commitment: finalized }
+    result:
+      name: rewards
+      value:
+        - epoch: 800
+          effectiveSlot: 346032000
+          amount: 2500
+          postBalance: 499999442500
+          commission: null
+        - null
+  - name: minimum-context
+    summary: Require the selected commitment to reach a minimum context slot.
+    params:
+      - name: addresses
+        value: ["6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu"]
+      - name: config
+        value: { epoch: 800, commitment: confirmed, minContextSlot: 346032000 }
+    result:
+      name: rewards
+      value: [null]
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "confirmed/finalized only; payout boundary and partition availability can return -32004 or -32017; default address limit is 100; epoch math uses configured genesis or a no-warmup production fallback" }
