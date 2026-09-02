@@ -11,5 +11,4 @@ Returns whether `blockhash` is still in the selected bank's recent-blockhash que
 
 ## Implementation notes
 
-- **superbank**: tests a recent-block window over ClickHouse-stored blocks. `processed` requires the optional gRPC head cache; without it, the method serves `confirmed` and `finalized` views only. A retained blockhash outside the processing-age window returns false.
-- **cloudbreak**: method not served.
+- [**Superbank**](../../implementations/superbank.md): tests a recent-block window over ClickHouse-stored blocks. `processed` requires the optional gRPC head cache; without it, the method serves `confirmed` and `finalized` views only. A retained blockhash outside the processing-age window returns false.
