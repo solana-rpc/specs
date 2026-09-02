@@ -11,5 +11,4 @@ Returns the slots that contain blocks in the inclusive range from `startSlot` th
 
 ## Implementation notes
 
-- **superbank** reads slot metadata from ClickHouse. It rejects `processed` unless the optional gRPC head cache is enabled, and does not accept `minContextSlot`.
-- **cloudbreak** does not serve the method.
+- [**Superbank**](../../implementations/superbank.md): reads slot metadata from ClickHouse. It rejects `processed` unless the optional gRPC head cache is enabled, and does not accept `minContextSlot`.
