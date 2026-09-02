@@ -16,6 +16,4 @@ this blockhash will be accepted.
 
 ## Implementation notes
 
-- **superbank**: served from ClickHouse-stored blocks; `processed` requires
-  the `grpc-head-cache` feature.
-- **cloudbreak**: method not served.
+- [**Superbank**](../../implementations/superbank.md): served from ClickHouse-stored blocks or the optional head cache. `processed` requires the `grpc-head-cache` build feature and an enabled, configured head cache.
