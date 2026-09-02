@@ -35,7 +35,7 @@ InternalError:
 BlockCleanedUp:
   code: -32001
   message: "Block {slot} cleaned up, does not exist on node. First available block: {first_available_block}"
-  emittedBy: [getBlock]
+  emittedBy: [getBlock, getInflationReward]
 SendTransactionPreflightFailure:
   code: -32002
   message: "Transaction simulation failed: {message}"
@@ -140,7 +140,7 @@ MinContextSlotNotReached:
     required: [contextSlot]
     properties:
       contextSlot: { $ref: '#/components/schemas/Slot' }
-  emittedBy: [getBalance, getAccountInfo, getMultipleAccounts, getProgramAccounts, getTokenAccountsByOwner, getLatestBlockhash, getSlot, getBlockHeight, getSignaturesForAddress]
+  emittedBy: [getBalance, getAccountInfo, getMultipleAccounts, getProgramAccounts, getTokenAccountsByOwner, getLatestBlockhash, getSlot, getBlockHeight, getSignaturesForAddress, getInflationReward]
 EpochRewardsPeriodActive:
   code: -32017
   message: "Epoch rewards period still active at slot {slot}"
