@@ -27,6 +27,10 @@ an unrooted but confirmed slot is returned and its `blockTime` may be filled
 in from the live bank; under `finalized`, only rooted transactions are
 returned.
 
+## Exact-slot lookup
+
+The optional `config.slot` restricts the lookup to one exact slot. It lets a caller that already knows a transaction's slot avoid an implementation's general signature lookup. The signature remains the primary lookup key. If the signature is absent from `slot`, the result is `null`, even when that signature exists in another slot.
+
 ## Result members
 
 - `slot` — the slot containing the transaction.
@@ -62,8 +66,8 @@ the config object are ignored by the reference implementation.
 
 - **superbank**:
   - Accepts only `encoding`, `commitment`, `maxSupportedTransactionVersion`,
-    plus a vendor `slot` hint that is **not** part of this spec; any other
-    config member is rejected with -32602, where Agave would ignore it.
+    and `slot`; any other config member is rejected with -32602, where Agave
+    would ignore it. Its `slot` lookup is an exact signature-and-slot query.
   - Rejects the all-ones signature
     (`1111111111111111111111111111111111111111111111111111111111111111`) as an
     invalid signature rather than looking it up.
@@ -74,4 +78,5 @@ the config object are ignored by the reference implementation.
   - Supports transaction v1 (SIMD-0385) when the request sends
     `maxSupportedTransactionVersion: 1`; JSON encodings then report
     `version: 1` and expose `message.transactionConfig`.
+- **Agave**: does not recognize `slot` and ignores it as an unknown config member, so it performs the normal signature lookup.
 - **cloudbreak**: method not served (account-state RPC only).
