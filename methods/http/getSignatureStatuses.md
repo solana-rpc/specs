@@ -16,5 +16,4 @@ By default the method searches only the node's recent-status cache. Set `searchT
 
 ## Implementation notes
 
-- **superbank**: searches its enabled recent cache tiers first. With `searchTransactionHistory: true`, it searches ClickHouse-backed history. Without the optional gRPC head cache, its context and non-null results are finalized rather than Agave's processed-bank view. It accepts a malformed signature in the input array and returns `null` at that position; Agave rejects the whole request with `InvalidParams`.
-- **cloudbreak**: method not served.
+- [**Superbank**](../../implementations/superbank.md): searches its enabled recent cache tiers first. With `searchTransactionHistory: true`, it searches ClickHouse-backed history. Without the optional gRPC head cache, its context and non-null results are finalized rather than Agave's processed-bank view. It accepts a malformed signature in the input array and returns `null` at that position; Agave rejects the whole request with `InvalidParams`.
