@@ -18,6 +18,5 @@ All five fields are unsigned 64-bit integers except `warmup`, which is a boolean
 
 ## Implementation notes
 
-- **superbank**: the shipped reference at [`0a77db6`](https://github.com/solana-rpc/superbank/tree/0a77db6fb01191c771994b71e1d7b6ed8500aeca) returns `slotsPerEpoch: 432000`, `leaderScheduleSlotOffset: 432000`, `warmup: false`, `firstNormalEpoch: 0`, and `firstNormalSlot: 0` from the handler. It does not use the configured `GENESIS_PATH` for this RPC response; that setting currently affects only internal `getInflationReward` epoch math.
-- **superbank**: this is full for clusters with the modern production no-warmup schedule. It is partial for clusters with warmup epochs or different slot parameters because the response remains hard-coded.
-- **cloudbreak**: method not served.
+- [**Superbank**](../../implementations/superbank.md): the shipped reference at [`0a77db6`](https://github.com/solana-rpc/superbank/tree/0a77db6fb01191c771994b71e1d7b6ed8500aeca) returns `slotsPerEpoch: 432000`, `leaderScheduleSlotOffset: 432000`, `warmup: false`, `firstNormalEpoch: 0`, and `firstNormalSlot: 0` from the handler. It does not use the configured `GENESIS_PATH` for this RPC response; that setting currently affects only internal `getInflationReward` epoch math.
+- [**Superbank**](../../implementations/superbank.md): this is full for clusters with the modern production no-warmup schedule. It is partial for clusters with warmup epochs or different slot parameters because the response remains hard-coded.
