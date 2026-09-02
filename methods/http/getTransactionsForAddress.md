@@ -15,6 +15,5 @@ Returns a cursor-paginated history of transactions that involve `address`. The d
 
 ## Implementation notes
 
-- **superbank** is the reference implementation. `tokenAccounts` requires its optional token-owner activity data; requests for a non-`none` token filter fail with `InvalidParams` when that data is unavailable.
-- **superbank** accepts only `json`, `jsonParsed`, `base58`, and `base64` for full pages. It accepts option values case-insensitively and ignores unknown option and filter members. `processed` requires the optional gRPC head cache; otherwise it fails with `InvalidParams`.
-- **Agave** and **cloudbreak** do not serve the method.
+- [**Superbank**](../../implementations/superbank.md): is the reference implementation. `tokenAccounts` requires its optional token-owner activity data; requests for a non-`none` token filter fail with `InvalidParams` when that data is unavailable.
+- [**Superbank**](../../implementations/superbank.md): accepts only `json`, `jsonParsed`, `base58`, and `base64` for full pages. It accepts option values case-insensitively and ignores unknown option and filter members. `processed` requires the optional gRPC head cache; otherwise it fails with `InvalidParams`.
