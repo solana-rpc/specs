@@ -10,5 +10,4 @@ Returns the lowest slot for which the node can serve block data. The result is a
 
 ## Implementation notes
 
-- **superbank** reports the oldest slot in ClickHouse block metadata. It returns `null` before any block metadata is available, although the standard result is a slot number.
-- **cloudbreak** does not serve the method.
+- [**Superbank**](../../implementations/superbank.md): reports the oldest slot in ClickHouse block metadata. It returns `null` before any block metadata is available, although the standard result is a slot number.
