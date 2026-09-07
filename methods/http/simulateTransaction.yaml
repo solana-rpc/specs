@@ -1,0 +1,154 @@
+name: simulateTransaction
+status: standard
+summary: Simulates a transaction without submitting it to the cluster.
+params:
+  - name: transaction
+    required: true
+    summary: Encoded signed transaction.
+    schema: { type: string, minLength: 1 }
+  - name: config
+    required: false
+    summary: Simulation configuration.
+    schema:
+      type: object
+      properties:
+        sigVerify:
+          type: boolean
+          description: Verify transaction signatures. Default false.
+        replaceRecentBlockhash:
+          type: boolean
+          description: Replace the transaction blockhash with the latest blockhash. Default false.
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        encoding:
+          type: string
+          enum: [base58, base64]
+        accounts:
+          type: object
+          required: [addresses]
+          properties:
+            encoding:
+              type: string
+              enum: [base64, base64+zstd, jsonParsed]
+            addresses:
+              type: array
+              items: { $ref: '#/components/schemas/Pubkey' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+        innerInstructions:
+          type: boolean
+          description: Include inner instructions. Default false.
+result:
+  name: simulation
+  summary: Simulation output, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        type: object
+        required: [err, logs, accounts, unitsConsumed, loadedAccountsDataSize, returnData, innerInstructions, replacementBlockhash, fee, preBalances, postBalances, preTokenBalances, postTokenBalances, loadedAddresses]
+        properties:
+          err:
+            oneOf:
+              - $ref: '#/components/schemas/TransactionError'
+              - type: 'null'
+          logs:
+            oneOf:
+              - type: array
+                items: { type: string }
+              - type: 'null'
+          accounts:
+            oneOf:
+              - type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/UiAccount'
+                    - type: 'null'
+              - type: 'null'
+          unitsConsumed:
+            oneOf:
+              - $ref: '#/components/schemas/U64'
+              - type: 'null'
+          loadedAccountsDataSize:
+            oneOf:
+              - $ref: '#/components/schemas/U32'
+              - type: 'null'
+          returnData:
+            oneOf:
+              - $ref: '#/components/schemas/UiTransactionReturnData'
+              - type: 'null'
+          innerInstructions:
+            oneOf:
+              - type: array
+                items: { $ref: '#/components/schemas/UiInnerInstructions' }
+              - type: 'null'
+          replacementBlockhash:
+            oneOf:
+              - type: object
+                required: [blockhash, lastValidBlockHeight]
+                properties:
+                  blockhash: { $ref: '#/components/schemas/Hash' }
+                  lastValidBlockHeight: { $ref: '#/components/schemas/U64' }
+              - type: 'null'
+          fee:
+            oneOf:
+              - $ref: '#/components/schemas/U64'
+              - type: 'null'
+          preBalances:
+            oneOf:
+              - type: array
+                items: { $ref: '#/components/schemas/U64' }
+              - type: 'null'
+          postBalances:
+            oneOf:
+              - type: array
+                items: { $ref: '#/components/schemas/U64' }
+              - type: 'null'
+          preTokenBalances:
+            oneOf:
+              - type: array
+                items: { $ref: '#/components/schemas/UiTransactionTokenBalance' }
+              - type: 'null'
+          postTokenBalances:
+            oneOf:
+              - type: array
+                items: { $ref: '#/components/schemas/UiTransactionTokenBalance' }
+              - type: 'null'
+          loadedAddresses:
+            oneOf:
+              - $ref: '#/components/schemas/UiLoadedAddresses'
+              - type: 'null'
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: successful-simulation
+    summary: A successful base64 transaction simulation.
+    params:
+      - name: transaction
+        value: "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAED"
+      - name: config
+        value: { encoding: base64, commitment: confirmed, sigVerify: false }
+    result:
+      name: simulation
+      value:
+        context: { slot: 250000123, apiVersion: "2.3.0" }
+        value:
+          err: null
+          logs: ["Program 11111111111111111111111111111111 success"]
+          accounts: null
+          unitsConsumed: 150
+          loadedAccountsDataSize: 0
+          returnData: null
+          innerInstructions: null
+          replacementBlockhash: null
+          fee: 5000
+          preBalances: [10000, 0]
+          postBalances: [5000, 5000]
+          preTokenBalances: null
+          postTokenBalances: null
+          loadedAddresses: { writable: [], readonly: [] }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "available only on a full unfiltered index; runtime state is reconstructed from indexed accounts and needs live conformance testing" }
+  superbank: { status: none }
