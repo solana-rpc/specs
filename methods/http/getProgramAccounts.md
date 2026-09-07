@@ -51,7 +51,7 @@ bare base58 string rather than a `[data, encoding]` tuple.
 
 ## Implementation notes
 
-- **cloudbreak**:
+- [**Cloudbreak**](../../implementations/cloudbreak.md):
   - accepts but **ignores** `sortResults` — results come back in database
     order regardless of the value passed.
   - restricts gPA against SPL Token / Token-2022 to queries shaped like
@@ -66,4 +66,3 @@ bare base58 string rather than a `[data, encoding]` tuple.
     error object, so clients must treat a parse failure as a possible
     server-side error rather than a malformed spec response.
   - rejects `processed` commitment (-32003) or downgrades it.
-- **superbank**: method not served (history-only RPC).

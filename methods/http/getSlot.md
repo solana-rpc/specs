@@ -13,8 +13,10 @@ bare integer — this method does **not** use the RpcResponse context envelope.
 
 ## Implementation notes
 
-- **cloudbreak** and **superbank** both reject `processed` commitment by
-  default (cloudbreak: -32003; superbank: -32602 unless built with the
-  `grpc-head-cache` feature and configured with a head cache).
+- [**Cloudbreak**](../../implementations/cloudbreak.md) rejects `processed`
+  commitment by default with -32003 or serves confirmed state when configured
+  to downgrade it.
+- **superbank** rejects `processed` commitment by default with -32602 unless
+  built with the `grpc-head-cache` feature and configured with a head cache.
 - Database-backed implementations approximate commitment from stored slot
   status rather than live bank state.
