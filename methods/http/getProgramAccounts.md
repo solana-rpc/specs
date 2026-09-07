@@ -31,8 +31,13 @@ bare base58 string rather than a `[data, encoding]` tuple.
 - At most 4 filters are accepted (`MAX_GET_PROGRAM_ACCOUNT_FILTERS`); more is
   `InvalidParams` (-32602), message `Too many filters provided; max 4`.
 - Filter kinds: `{ dataSize }`, `{ memcmp: { offset, bytes, encoding? } }`,
-  and the bare string `"tokenAccountState"` (matches accounts that
-  deserialize as initialized SPL Token accounts).
+  `{ valueCmp }`, and the bare string `"tokenAccountState"` (matches
+  accounts that deserialize as initialized SPL Token accounts).
+- `valueCmp` reads an unsigned little-endian integer from account data and
+  compares it with another same-width memory value or a base-10 constant.
+  Supported widths are U8, U16, U32, U64, and U128. Supported comparators are
+  `Eq`, `Ne`, `Gt`, `Ge`, `Lt`, and `Le`. An out-of-bounds,
+  mismatched, or invalid operand does not match.
 - `memcmp.bytes` defaults to base58; `encoding: base64` selects base64.
   Comparison data must decode to at most 128 bytes — larger is
   `InvalidParams` (-32602) with `Invalid param: DataTooLarge`.
@@ -52,6 +57,8 @@ bare base58 string rather than a `[data, encoding]` tuple.
 ## Implementation notes
 
 - **cloudbreak**:
+  - supports `valueCmp` as an in-memory post-filter and bypasses its GPA
+    result cache for requests that use it.
   - accepts but **ignores** `sortResults` — results come back in database
     order regardless of the value passed.
   - restricts gPA against SPL Token / Token-2022 to queries shaped like
