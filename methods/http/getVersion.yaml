@@ -1,0 +1,27 @@
+name: getVersion
+status: standard
+summary: Returns the node software version and optional feature-set identifier.
+params: []
+result:
+  name: version
+  summary: Node version information.
+  schema:
+    type: object
+    required: [solana-core]
+    properties:
+      solana-core: { type: string, minLength: 1 }
+      feature-set:
+        oneOf:
+          - $ref: '#/components/schemas/U32'
+          - type: 'null'
+examples:
+  - name: version
+    summary: Agave software and feature-set versions.
+    params: []
+    result:
+      name: version
+      value: { solana-core: "3.1.8", feature-set: 2891131721 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: full, notes: "solana-core is <upstream>-cloudbreak<version>; optional feature-set is omitted" }
+  superbank: { status: none }
