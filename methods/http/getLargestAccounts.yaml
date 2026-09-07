@@ -1,0 +1,53 @@
+name: getLargestAccounts
+status: standard
+summary: Returns the 20 accounts with the greatest lamport balances.
+params:
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        filter:
+          type: string
+          enum: [circulating, nonCirculating]
+        sortResults:
+          type: boolean
+          description: Sort results by balance before returning. Default true.
+result:
+  name: accounts
+  summary: Largest accounts, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        type: array
+        maxItems: 20
+        items:
+          type: object
+          required: [address, lamports]
+          properties:
+            address: { $ref: '#/components/schemas/Pubkey' }
+            lamports: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/ScanError'
+examples:
+  - name: circulating
+    summary: Largest circulating accounts.
+    params:
+      - name: config
+        value: { commitment: finalized, filter: circulating }
+    result:
+      name: accounts
+      value:
+        context: { slot: 1114, apiVersion: "2.3.0" }
+        value:
+          - { address: "FYjHNoFtSQ4V6hWgkRiiYWqQ9fV2YQwq9K4XJ3HhQx8Z", lamports: 999000000000 }
+          - { address: "48gpnn8nsmkvkgso7462Z1nFhUrprGQ71u1YLBPzizbY", lamports: 500000000000 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "conditional largest-accounts feature; processed rejected or downgraded; disabled or missing-record errors differ" }
+  superbank: { status: none }
