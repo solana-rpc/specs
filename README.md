@@ -23,6 +23,7 @@ documents a `data` schema. Clients that parse Agave's message text or read
 | Path | Contents |
 |---|---|
 | `methods/http/`, `methods/websocket/` | One `<method>.yaml` (machine-readable schema) + `<method>.md` (normative prose) per method |
+| `implementations/` | Implementation profiles and compatibility summaries |
 | `schemas/` | Shared JSON Schema components, one per file |
 | `errors/codes.yaml` | Canonical error-code registry |
 | `proposals/` | RFC proposal documents |
