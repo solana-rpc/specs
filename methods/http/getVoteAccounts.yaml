@@ -50,5 +50,5 @@ examples:
         delinquent: []
 implementations:
   agave: { status: full }
-  cloudbreak: { status: partial, notes: "available only when Vote and Stake programs are indexed; unavailable and not-ready errors are product-local" }
+  cloudbreak: { status: partial, notes: "available only when Vote and Stake programs are indexed; commitment is accepted but ignored; unavailable and not-ready errors are product-local" }
   superbank: { status: none }

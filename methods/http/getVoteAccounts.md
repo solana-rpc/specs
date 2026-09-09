@@ -14,4 +14,4 @@ Each epoch-credit tuple is `[epoch, credits, previousCredits]`. A vote account i
 
 ## Implementation notes
 
-- [**Cloudbreak**](../../implementations/cloudbreak.md) requires both Vote and Stake programs in its index. It returns -32602 when the method is disabled and NodeUnhealthy (-32005) while the first stake snapshot is not ready. It derives the reference slot from finalized indexed state.
+- [**Cloudbreak**](../../implementations/cloudbreak.md) requires both Vote and Stake programs in its index. It returns -32602 when the method is disabled and NodeUnhealthy (-32005) while the first stake snapshot is not ready. It accepts but ignores `commitment` and always derives the reference slot from finalized indexed state.

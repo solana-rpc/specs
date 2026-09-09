@@ -27,7 +27,7 @@ Adds a vote-account status object with current and delinquent arrays.
 
 ## Compatibility
 
-Agave conforms. Cloudbreak implements the method when Vote and Stake programs are indexed and adds the optional basis-point commission field used by current Agave types. Superbank does not serve it. This is additive.
+Agave conforms. Cloudbreak implements the method when Vote and Stake programs are indexed and adds the optional basis-point commission field used by current Agave types. It accepts but ignores `commitment`, uses finalized indexed state, and uses product-local errors for disabled and not-ready states. Superbank does not serve the method. This is additive.
 
 ## Reference implementation
 
