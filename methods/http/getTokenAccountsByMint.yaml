@@ -12,14 +12,16 @@ params:
     schema:
       type: object
       properties:
-        commitment: { $ref: '#/components/schemas/CommitmentConfirmedFinalized' }
+        commitment: { $ref: '#/components/schemas/Commitment' }
         encoding: { $ref: '#/components/schemas/AccountEncoding' }
         dataSlice: { $ref: '#/components/schemas/DataSlice' }
         minContextSlot: { $ref: '#/components/schemas/Slot' }
         programId:
-          allOf:
-            - $ref: '#/components/schemas/Pubkey'
-          description: Account owner program. Defaults to the legacy SPL Token program.
+          type: string
+          enum:
+            - "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+            - "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+          description: Token program. Defaults to the legacy SPL Token program.
 result:
   name: tokenAccounts
   summary: Matching accounts, in an RpcResponse envelope.
@@ -55,5 +57,5 @@ examples:
         value: []
 implementations:
   agave: { status: none }
-  cloudbreak: { status: partial, notes: "shipped extension; streamed response can truncate if a database error occurs after output starts" }
+  cloudbreak: { status: partial, notes: "shipped extension; accepts arbitrary indexed programId; processed is rejected or downgraded; minContextSlot and database errors differ; streamed response can truncate after output starts" }
   superbank: { status: none }

@@ -19,7 +19,7 @@ Clients commonly need every token account for one mint. Expressing this through 
 
 ## Specification
 
-Add the method pair. The method accepts a mint pubkey and optional account configuration. `programId` selects the account owner and defaults to the legacy SPL Token program. The result always uses an `RpcResponse` envelope and contains keyed accounts whose first 32 data bytes equal the mint.
+Add the method pair. The method accepts a mint pubkey and optional account configuration. `programId` selects either the legacy SPL Token program or Token-2022 and defaults to the legacy program. The result always uses an `RpcResponse` envelope and contains keyed accounts whose first 32 data bytes equal the mint. Result order is unspecified.
 
 ## Return-type impact
 
@@ -27,7 +27,7 @@ Adds an `RpcResponse` containing an array of `RpcKeyedAccount` values.
 
 ## Compatibility
 
-Cloudbreak ships the method. Agave and Superbank do not serve it and must add it to claim full support after standardization. This is additive for clients.
+Cloudbreak ships the method, but it currently accepts any indexed owner program rather than only the two token programs. It also rejects or downgrades `processed` and does not reproduce the proposed standard error contract. Agave and Superbank do not serve the method and must add it to claim full support after standardization. The new method is additive for existing clients.
 
 ## Reference implementation
 
