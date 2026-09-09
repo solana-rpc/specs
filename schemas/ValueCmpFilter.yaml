@@ -1,0 +1,23 @@
+title: ValueCmpFilter
+description: Compares unsigned little-endian integers read from account data.
+type: object
+required: [valueCmp]
+properties:
+  valueCmp:
+    type: object
+    required: [left, comparator, right]
+    properties:
+      left: { $ref: '#/components/schemas/ValueCmpMemoryOperand' }
+      comparator:
+        type: string
+        enum: [Eq, Ne, Gt, Ge, Lt, Le]
+      right:
+        oneOf:
+          - $ref: '#/components/schemas/ValueCmpMemoryOperand'
+          - title: ConstantOperand
+            type: object
+            required: [Constant]
+            properties:
+              Constant:
+                type: string
+                pattern: '^[0-9]+$'
