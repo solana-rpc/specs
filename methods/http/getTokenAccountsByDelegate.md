@@ -20,4 +20,4 @@ Invalid pubkeys, filter shapes, token programs, and encodings return `InvalidPar
 
 ## Implementation notes
 
-- [**Cloudbreak**](../../implementations/cloudbreak.md) supports SPL Token and Token-2022 through a shared owner/delegate handler. It rejects `processed` with -32003 or serves confirmed state when configured to downgrade. Result ordering depends on the query and encoding path.
+- [**Cloudbreak**](../../implementations/cloudbreak.md) supports SPL Token and Token-2022 through a shared owner/delegate handler. It rejects `processed` with -32003 or serves confirmed state when configured to downgrade. It accepts but does not enforce `minContextSlot`. Cloudbreak does not impose a final pubkey order across all query and encoding paths; live tests must establish the returned order.

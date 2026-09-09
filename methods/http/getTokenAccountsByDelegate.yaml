@@ -54,5 +54,5 @@ examples:
         value: []
 implementations:
   agave: { status: full }
-  cloudbreak: { status: partial, notes: "SPL Token and Token-2022 supported; processed rejected or downgraded; ordering varies by query path" }
+  cloudbreak: { status: partial, notes: "SPL Token and Token-2022 supported; processed rejected or downgraded; minContextSlot accepted but not enforced; final ordering not guaranteed across paths" }
   superbank: { status: none }

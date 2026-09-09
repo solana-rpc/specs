@@ -27,7 +27,7 @@ Adds an `RpcResponse` containing an array of `RpcKeyedAccount` values.
 
 ## Compatibility
 
-Agave conforms. Cloudbreak implements both SPL Token and Token-2022 through its shared owner/delegate handler but does not provide native processed reads. Superbank does not serve the method. This is additive for clients.
+Agave conforms. Cloudbreak implements both SPL Token and Token-2022 through its shared owner/delegate handler but does not provide native processed reads or enforce the accepted `minContextSlot`. It also does not impose a final pubkey order across all query paths. Superbank does not serve the method. This is additive for clients.
 
 ## Reference implementation
 
