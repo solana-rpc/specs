@@ -27,7 +27,7 @@ None. The filter only narrows the existing account array.
 
 ## Compatibility
 
-Cloudbreak ships the filter. Agave and Superbank do not support it and must add it to claim full `getProgramAccounts` support after standardization. Existing requests are unaffected.
+Cloudbreak ships the filter. It does not enforce the existing four-filter request limit. Agave and Superbank do not support `valueCmp` and must add it to claim full `getProgramAccounts` support after standardization. Existing requests are unaffected.
 
 ## Reference implementation
 

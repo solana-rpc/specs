@@ -111,5 +111,5 @@ examples:
       value: []
 implementations:
   agave: { status: partial, notes: "does not support the valueCmp extension" }
-  cloudbreak: { status: partial, notes: "supports valueCmp; sortResults ignored; token-program gPA restricted; minContextSlot only enforced with withContext:true" }
+  cloudbreak: { status: partial, notes: "supports valueCmp; four-filter limit not enforced; sortResults ignored; token-program gPA restricted; minContextSlot only enforced with withContext:true" }
   superbank: { status: none }

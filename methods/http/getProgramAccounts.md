@@ -57,8 +57,8 @@ bare base58 string rather than a `[data, encoding]` tuple.
 ## Implementation notes
 
 - **cloudbreak**:
-  - supports `valueCmp` as an in-memory post-filter and bypasses its GPA
-    result cache for requests that use it.
+  - supports `valueCmp` with the wire format defined here. It does not enforce
+    the standard four-filter limit and accepts longer filter arrays.
   - accepts but **ignores** `sortResults` — results come back in database
     order regardless of the value passed.
   - restricts gPA against SPL Token / Token-2022 to queries shaped like
