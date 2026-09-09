@@ -96,5 +96,5 @@ examples:
         value: []
 implementations:
   agave: { status: full }
-  cloudbreak: { status: partial, notes: "delegate byte-layout matching supports legacy SPL Token only for ByDelegate; programId filter restricted to SPL Token / Token-2022" }
+  cloudbreak: { status: partial, notes: "delegate matching supports SPL Token and Token-2022; minContextSlot is accepted but not enforced; programId is restricted to those programs; final ordering is not guaranteed across paths" }
   superbank: { status: none }

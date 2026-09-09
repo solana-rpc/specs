@@ -17,9 +17,8 @@ requested commitment level.
 
 ## Implementation notes
 
-- **cloudbreak**: rejects `processed` commitment with -32003
+- [**Cloudbreak**](../../implementations/cloudbreak.md): rejects `processed` commitment with -32003
   `PROCESSED_COMMITMENT_NOT_SUPPORTED` (or silently downgrades to `confirmed`
   when configured). Returns a non-standard error (-32010
   `ACCOUNT_OWNER_EXCLUDED`) when the account exists but its owner program is
   not indexed.
-- **superbank**: method not served (history-only RPC).
