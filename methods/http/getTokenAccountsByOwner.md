@@ -43,5 +43,7 @@ mint or to a single token program.
   programs (SPL Token and Token-2022) and rejects others with -32602.
   Rejects `processed` commitment (-32003) or downgrades it to `confirmed`.
   Its sibling `getTokenAccountsByDelegate` matches the delegate by byte
-  layout and supports both SPL Token and Token-2022. Result ordering depends
-  on the selected query and encoding path.
+  layout and supports both SPL Token and Token-2022. The shared handler accepts
+  but does not enforce `minContextSlot`. Cloudbreak does not impose a final
+  pubkey order across all query and encoding paths; live tests must establish
+  the returned order.

@@ -52,8 +52,9 @@ bare base58 string rather than a `[data, encoding]` tuple.
 ## Implementation notes
 
 - [**Cloudbreak**](../../implementations/cloudbreak.md):
-  - accepts but **ignores** `sortResults` — results come back in database
-    order regardless of the value passed.
+  - accepts but **ignores** `sortResults`. Cloudbreak does not impose a final
+    pubkey order across all query paths; live tests must establish the returned
+    order.
   - restricts gPA against SPL Token / Token-2022 to queries shaped like
     `getTokenAccountsByOwner` / `getTokenAccountsByDelegate` (owner or
     delegate memcmp) or filtered by mint; anything else is rejected with
