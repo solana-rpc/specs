@@ -27,7 +27,7 @@ Adds an `RpcResponse` containing address and lamport objects.
 
 ## Compatibility
 
-Agave conforms. Cloudbreak implements the method only when its largest-accounts feature has a populated record. Superbank does not serve it. This is additive.
+Agave conforms. Cloudbreak implements the method only when its largest-accounts feature has a populated record. It accepts but ignores `sortResults` and always returns the maintained descending order. Superbank does not serve it. This is additive.
 
 ## Reference implementation
 

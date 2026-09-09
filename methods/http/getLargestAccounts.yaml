@@ -49,5 +49,5 @@ examples:
           - { address: "48gpnn8nsmkvkgso7462Z1nFhUrprGQ71u1YLBPzizbY", lamports: 500000000000 }
 implementations:
   agave: { status: full }
-  cloudbreak: { status: partial, notes: "conditional largest-accounts feature; processed rejected or downgraded; disabled or missing-record errors differ" }
+  cloudbreak: { status: partial, notes: "conditional largest-accounts feature; processed rejected or downgraded; sortResults ignored; disabled or missing-record errors differ" }
   superbank: { status: none }
