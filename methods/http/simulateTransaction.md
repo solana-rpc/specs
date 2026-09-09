@@ -20,4 +20,4 @@ Invalid transaction encoding, malformed transaction bytes, invalid configuration
 
 ## Implementation notes
 
-- [**Cloudbreak**](../../implementations/cloudbreak.md) exposes this method only on a full unfiltered account index. It reconstructs the runtime environment and bank inputs from indexed account and slot state. Standard conformance needs live comparison across successful execution, runtime errors, nonce transactions, address tables, returned accounts, feature gates, and replacement blockhashes.
+- [**Cloudbreak**](../../implementations/cloudbreak.md) exposes this method only on a full unfiltered account index. It rejects `processed` with -32003 or serves confirmed state when configured to downgrade. A `minContextSlot` failure uses -32000 with null data instead of the standard -32016 payload. It reconstructs the runtime environment and bank inputs from indexed account and slot state. Standard conformance needs live comparison across successful execution, runtime errors, nonce transactions, address tables, returned accounts, feature gates, and replacement blockhashes.

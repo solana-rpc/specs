@@ -27,7 +27,7 @@ Adds the simulation result object and its nullable logs, accounts, resource tota
 
 ## Compatibility
 
-Agave conforms. Cloudbreak implements the method only on a full unfiltered account index and reconstructs a runtime view from indexed state. Superbank does not serve the method. This is additive.
+Agave conforms. Cloudbreak implements the method only on a full unfiltered account index and reconstructs a runtime view from indexed state. It rejects or downgrades `processed`, and its min-context error payload differs from Agave. Superbank does not serve the method. This is additive.
 
 ## Reference implementation
 

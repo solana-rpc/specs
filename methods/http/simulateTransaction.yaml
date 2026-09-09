@@ -150,5 +150,5 @@ examples:
           loadedAddresses: { writable: [], readonly: [] }
 implementations:
   agave: { status: full }
-  cloudbreak: { status: partial, notes: "available only on a full unfiltered index; runtime state is reconstructed from indexed accounts and needs live conformance testing" }
+  cloudbreak: { status: partial, notes: "available only on a full unfiltered index; processed is rejected or downgraded; minContextSlot error payload differs; reconstructed runtime state needs live conformance testing" }
   superbank: { status: none }
