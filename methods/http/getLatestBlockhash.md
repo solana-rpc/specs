@@ -16,6 +16,7 @@ this blockhash will be accepted.
 
 ## Implementation notes
 
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4361-L4368).
 - **superbank**: served from ClickHouse-stored blocks; `processed` requires
   the `grpc-head-cache` feature.
 - **cloudbreak**: method not served.

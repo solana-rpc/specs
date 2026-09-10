@@ -39,6 +39,7 @@ mint or to a single token program.
 
 ## Implementation notes
 
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3540-L3554).
 - **cloudbreak**: restricts the `programId` filter to the two known token
   programs (SPL Token and Token-2022) and rejects others with -32602.
   Rejects `processed` commitment (-32003) or downgrades it to `confirmed`.

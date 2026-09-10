@@ -71,6 +71,7 @@ node with transaction history disabled entirely fails every call with
 
 ## Implementation notes
 
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4293-L4325).
 - **superbank**: served from ClickHouse.
   - Parses `commitment` as a raw lowercased string and accepts only
     `confirmed` and `finalized` (plus `processed` as a vendor extension when

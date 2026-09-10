@@ -105,6 +105,7 @@ The reference implementation ignores unknown members of the config object.
 
 ## Implementation notes
 
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4234-L4241).
 - **superbank**: serves the method from ClickHouse rather than a blockstore.
   - **Rejects unknown config fields** with -32602, where Agave ignores them.
     The accepted set is exactly `encoding`, `transactionDetails`, `rewards`,

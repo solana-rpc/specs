@@ -37,6 +37,7 @@ variant.
 
 ## Implementation notes
 
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3340-L3351).
 - **cloudbreak**: rejects `processed` (-32003) or downgrades it; default
   encoding is base58 ("binary") here but base64 for `getMultipleAccounts` —
   a documented inconsistency. `jsonParsed` token accounts whose mint row is
