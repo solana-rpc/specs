@@ -1,0 +1,38 @@
+name: getBlockCommitment
+status: standard
+summary: Returns the stake commitment for a block slot.
+params:
+  - name: slot
+    required: true
+    summary: Slot whose commitment is requested.
+    schema: { $ref: '#/components/schemas/Slot' }
+result:
+  name: blockCommitment
+  summary: Stake commitment array, if retained, and the cluster total stake.
+  schema:
+    type: object
+    required: [commitment, totalStake]
+    properties:
+      commitment:
+        oneOf:
+          - type: array
+            minItems: 32
+            maxItems: 32
+            items: { $ref: '#/components/schemas/U64' }
+          - type: 'null'
+      totalStake: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: committed-slot
+    summary: Return commitment for a recently rooted slot.
+    params:
+      - name: slot
+        value: 5
+    result:
+      name: blockCommitment
+      value: { commitment: null, totalStake: 10000 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
