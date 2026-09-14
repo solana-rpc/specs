@@ -1,0 +1,29 @@
+name: getSlotLeader
+status: standard
+summary: Returns the identity of the leader for the current slot.
+params:
+  - name: config
+    required: false
+    summary: Commitment configuration.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: identity
+  summary: Leader identity public key.
+  schema: { $ref: '#/components/schemas/Pubkey' }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+examples:
+  - name: current-leader
+    summary: Leader at finalized commitment.
+    params: []
+    result:
+      name: identity
+      value: "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri"
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
