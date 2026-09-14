@@ -98,3 +98,167 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: partial, notes: "delegate byte-layout matching supports legacy SPL Token only for ByDelegate; programId filter restricted to SPL Token / Token-2022" }
   superbank: { status: none }
+
+category: Tokens
+tests:
+  - name: empty-owner
+    params:
+      - $fixture: missingAccount
+      - programId:
+          $fixture: tokenProgram
+      - encoding: base64
+    expect:
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            maxItems: 0
+  - name: owner-by-programId
+    params:
+      - $fixture: tokenOwner
+      - programId:
+          $fixture: tokenProgram
+      - encoding: jsonParsed
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            minItems: 1
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: array
+            items:
+              type: object
+              required:
+                - account
+              properties:
+                account:
+                  type: object
+                  required:
+                    - data
+                  properties:
+                    data:
+                      type: object
+                      required:
+                        - parsed
+                      properties:
+                        parsed:
+                          type: object
+                          required:
+                            - info
+                          properties:
+                            info:
+                              type: object
+                              required:
+                                - owner
+                              properties:
+                                owner:
+                                  const:
+                                    $fixture: tokenOwner
+  - name: owner-by-mint
+    params:
+      - $fixture: tokenOwner
+      - mint:
+          $fixture: tokenMint
+      - encoding: jsonParsed
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            minItems: 1
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: array
+            items:
+              type: object
+              required:
+                - account
+              properties:
+                account:
+                  type: object
+                  required:
+                    - data
+                  properties:
+                    data:
+                      type: object
+                      required:
+                        - parsed
+                      properties:
+                        parsed:
+                          type: object
+                          required:
+                            - info
+                          properties:
+                            info:
+                              type: object
+                              required:
+                                - owner
+                                - mint
+                              properties:
+                                owner:
+                                  const:
+                                    $fixture: tokenOwner
+                                mint:
+                                  const:
+                                    $fixture: tokenMint
+  - name: invalid-token-program
+    params:
+      - $fixture: missingAccount
+      - programId:
+          $fixture: account
+    expect:
+      error: InvalidParams
+  - name: ambiguous-filter
+    params:
+      - $fixture: missingAccount
+      - mint:
+          $fixture: nativeMint
+        programId:
+          $fixture: tokenProgram
+    expect:
+      error: InvalidParams
+  - name: empty-filter
+    params:
+      - $fixture: missingAccount
+      - {}
+    expect:
+      error: InvalidParams
+  - name: missing-required-params
+    params: []
+    expect:
+      error: InvalidParams
+  - name: invalid-base58
+    params:
+      - not-a-base58-key!
+      - programId:
+          $fixture: tokenProgram
+      - encoding: base64
+    expect:
+      error: InvalidParams
+  - name: min-context-slot
+    params:
+      - $fixture: missingAccount
+      - programId:
+          $fixture: tokenProgram
+      - encoding: base64
+        minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached

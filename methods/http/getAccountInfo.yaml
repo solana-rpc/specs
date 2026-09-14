@@ -66,3 +66,184 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: partial, notes: "processed rejected/downgraded; default encoding binary (base58)" }
   superbank: { status: none }
+
+category: Accounts
+tests:
+  - name: encoding
+    params:
+      - $fixture: account
+      - encoding:
+          $matrix: encoding
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            not:
+              type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: object
+            required:
+              - data
+            properties:
+              data:
+                type: array
+                items:
+                  - type: string
+                  - const:
+                      $matrix: encoding
+                minItems: 2
+                maxItems: 2
+    matrix:
+      encoding:
+        - base58
+        - base64
+        - base64+zstd
+  - name: encoding-binary
+    params:
+      - $fixture: account
+      - encoding: binary
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            not:
+              type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: object
+            required:
+              - data
+            properties:
+              data:
+                type: string
+  - name: encoding-jsonParsed
+    params:
+      - $fixture: account
+      - encoding: jsonParsed
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            not:
+              type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: object
+            required:
+              - data
+            properties:
+              data:
+                oneOf:
+                  - type: object
+                  - type: array
+                    items:
+                      - type: string
+                      - const: base64
+                    minItems: 2
+                    maxItems: 2
+  - name: default-encoding
+    params:
+      - $fixture: account
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            not:
+              type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: object
+            required:
+              - data
+            properties:
+              data:
+                type: string
+  - name: data-slice
+    params:
+      - $fixture: account
+      - encoding: base64
+        dataSlice:
+          offset: 0
+          length: 0
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            not:
+              type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: object
+            required:
+              - data
+            properties:
+              data:
+                const:
+                  - ""
+                  - base64
+  - name: missing-account
+    params:
+      - $fixture: missingAccount
+    expect:
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: "null"
+  - name: missing-required-params
+    params: []
+    expect:
+      error: InvalidParams
+  - name: invalid-base58
+    params:
+      - not-a-base58-key!
+      - encoding: base64
+    expect:
+      error: InvalidParams
+  - name: min-context-slot
+    params:
+      - $fixture: account
+      - encoding: base64
+        minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached

@@ -25,6 +25,14 @@
 
 ## Style
 
+### Executable compatibility cases
+
+Declare a method's live tests in a top-level YAML `tests` list. Keep `category` as a separate method field. Each test has a `name`, `params`, and optional `expect`; successful responses always use the method's existing result schema. Omit `tests` or set `tests: []` to skip the method. Documentation examples never execute against live endpoints. Adding a method does not require a TypeScript adapter. See the [declaration format](tooling/compatibility.md#declare-tests-in-the-spec) for fixtures and optional setup.
+
+Put transaction history and status queries in `Ledger`. Reserve `Transactions` for `sendTransaction` and `simulateTransaction`. Leave tests off transaction submission and airdrop methods. Review all test and discovery requests before running them against a live endpoint. Keep private endpoints, credentials, and live fixture files outside this repository.
+
+### File format
+
 - YAML: 2-space indent. Schema files are PascalCase; method files are the
   exact wire method name.
 - JSON Schema: draft-07 subset (OpenRPC 1.2.6). Use `items: [a, b]` tuple
