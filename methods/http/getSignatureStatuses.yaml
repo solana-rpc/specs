@@ -1,0 +1,99 @@
+name: getSignatureStatuses
+status: standard
+summary: Returns the status of each supplied transaction signature.
+params:
+  - name: signatures
+    required: true
+    summary: Transaction signatures to look up, in result order.
+    schema:
+      type: array
+      minItems: 1
+      maxItems: 256
+      items: { $ref: '#/components/schemas/Signature' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      required: [searchTransactionHistory]
+      properties:
+        searchTransactionHistory:
+          type: boolean
+          description: Search finalized transaction history when the recent-status cache has no entry.
+result:
+  name: signatureStatuses
+  summary: A status or null for every requested signature, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        type: array
+        items:
+          oneOf:
+            - type: object
+              required: [slot, confirmations, err, status, confirmationStatus]
+              properties:
+                slot: { $ref: '#/components/schemas/Slot' }
+                confirmations:
+                  oneOf:
+                    - { $ref: '#/components/schemas/U64' }
+                    - type: 'null'
+                err:
+                  oneOf:
+                    - { $ref: '#/components/schemas/TransactionError' }
+                    - type: 'null'
+                status:
+                  description: >-
+                    Transaction execution result, as {"Ok": null} or
+                    {"Err": TransactionError}.
+                  type: object
+                  minProperties: 1
+                  maxProperties: 1
+                confirmationStatus: { $ref: '#/components/schemas/ConfirmationStatus' }
+            - type: 'null'
+              description: The node has no status for this signature at the requested search scope.
+errors:
+  - $ref: '#/components/errors/TransactionHistoryNotAvailable'
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: recent-and-unknown
+    summary: A recent finalized signature and an unknown signature.
+    params:
+      - name: signatures
+        value:
+          - "5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv"
+          - "4uQeVj5tqViQh7yWWGStvkEG1Zmhx6uasJtWCJziofM1B2K7ES8j1HTBLkQvS1zVGXRPKKzWZ3jMVYXwJDEmvBtY"
+    result:
+      name: signatureStatuses
+      value:
+        context: { slot: 114, apiVersion: "2.3.0" }
+        value:
+          - slot: 114
+            confirmations: null
+            err: null
+            status: { Ok: null }
+            confirmationStatus: finalized
+          - null
+  - name: search-history
+    summary: Search finalized history after a status leaves the recent cache.
+    params:
+      - name: signatures
+        value: ["5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv"]
+      - name: config
+        value: { searchTransactionHistory: true }
+    result:
+      name: signatureStatuses
+      value:
+        context: { slot: 114, apiVersion: "2.3.0" }
+        value:
+          - slot: 114
+            confirmations: null
+            err: null
+            status: { Ok: null }
+            confirmationStatus: finalized
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "historical lookup is ClickHouse-backed; default context is finalized unless grpc-head-cache is enabled; malformed signatures yield null entries instead of InvalidParams" }
