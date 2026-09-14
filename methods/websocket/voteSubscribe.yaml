@@ -1,0 +1,39 @@
+name: voteSubscribe
+status: standard
+summary: Subscribe to vote messages.
+params: []
+result:
+  name: subscriptionId
+  summary: Identifier for this connection's subscription.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/MethodNotFound'
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: basic
+    summary: Create the subscription.
+    params: []
+    result:
+      name: subscriptionId
+      value: 1
+notification:
+  name: voteNotification
+  description: Notification payload sent for this subscription.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription: { $ref: '#/components/schemas/U64' }
+      result:
+        type: object
+        required: [votePubkey, slots, hash, timestamp, signature]
+        properties:
+          votePubkey: { $ref: '#/components/schemas/Pubkey' }
+          slots: { type: array, items: { $ref: '#/components/schemas/Slot' } }
+          hash: { $ref: '#/components/schemas/Hash' }
+          timestamp: { oneOf: [{ $ref: '#/components/schemas/I64' }, { type: 'null' }] }
+          signature: { $ref: '#/components/schemas/Signature' }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
