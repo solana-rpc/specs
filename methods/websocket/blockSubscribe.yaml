@@ -1,0 +1,73 @@
+name: blockSubscribe
+status: standard
+summary: Subscribe to block data and content.
+params:
+  - name: filter
+    required: true
+    summary: All blocks or blocks that mention an account or program.
+    schema:
+      oneOf:
+        - type: string
+          enum: [all]
+        - type: object
+          required: [mentionsAccountOrProgram]
+          properties:
+            mentionsAccountOrProgram: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Commitment, encoding, transaction-detail, rewards, and version options.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        encoding: { $ref: '#/components/schemas/TransactionEncoding' }
+        transactionDetails: { type: string, enum: [full, accounts, signatures, none] }
+        showRewards: { type: boolean }
+        maxSupportedTransactionVersion: { $ref: '#/components/schemas/U8' }
+result:
+  name: subscriptionId
+  summary: Identifier for this connection's subscription.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/MethodNotFound'
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: basic
+    summary: Create the subscription.
+    params:
+      - name: filter
+        value: all
+    result:
+      name: subscriptionId
+      value: 1
+notification:
+  name: blockNotification
+  description: Notification payload sent for this subscription.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription: { $ref: '#/components/schemas/U64' }
+      result:
+        type: object
+        required: [slot, block, err]
+        properties:
+          slot: { $ref: '#/components/schemas/Slot' }
+          block:
+            oneOf:
+              - { $ref: '#/components/schemas/UiConfirmedBlock' }
+              - type: 'null'
+          err:
+            oneOf:
+              - type: string
+                enum: [BlockStoreError]
+              - type: object
+                required: [UnsupportedTransactionVersion]
+                properties:
+                  UnsupportedTransactionVersion: { $ref: '#/components/schemas/U8' }
+              - type: 'null'
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
