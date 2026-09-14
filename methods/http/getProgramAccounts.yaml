@@ -93,7 +93,23 @@ examples:
               executable: false
               rentEpoch: 28
               space: 42
+  - name: withValueComparison
+    summary: Select accounts whose little-endian u64 at offset eight exceeds 100.
+    params:
+      - name: programId
+        value: "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T"
+      - name: config
+        value:
+          encoding: base64
+          filters:
+            - valueCmp:
+                left: { Mem: { offset: 8, value_type: U64 } }
+                comparator: Gt
+                right: { Constant: "100" }
+    result:
+      name: accounts
+      value: []
 implementations:
-  agave: { status: full }
-  cloudbreak: { status: partial, notes: "sortResults ignored; token-program gPA restricted; minContextSlot only enforced with withContext:true" }
+  agave: { status: partial, notes: "does not support the valueCmp extension" }
+  cloudbreak: { status: partial, notes: "supports valueCmp; four-filter limit not enforced; sortResults ignored; token-program gPA restricted; minContextSlot only enforced with withContext:true" }
   superbank: { status: none }
