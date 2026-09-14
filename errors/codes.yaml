@@ -131,7 +131,7 @@ UnsupportedTransactionVersion:
     Transaction version ({version}) is not supported by the requesting client.
     Please try the request again with the following configuration parameter:
     "maxSupportedTransactionVersion": {version}
-  emittedBy: [getBlock, getTransaction]
+  emittedBy: [getBlock, getTransaction, getTransactionsForAddress]
 MinContextSlotNotReached:
   code: -32016
   message: Minimum context slot has not been reached
@@ -140,7 +140,7 @@ MinContextSlotNotReached:
     required: [contextSlot]
     properties:
       contextSlot: { $ref: '#/components/schemas/Slot' }
-  emittedBy: [getBalance, getAccountInfo, getMultipleAccounts, getProgramAccounts, getTokenAccountsByOwner, getLatestBlockhash, getSlot, getBlockHeight, getSignaturesForAddress]
+  emittedBy: [getBalance, getAccountInfo, getMultipleAccounts, getProgramAccounts, getTokenAccountsByOwner, getLatestBlockhash, getSlot, getBlockHeight, getSignaturesForAddress, getTransactionsForAddress]
 EpochRewardsPeriodActive:
   code: -32017
   message: "Epoch rewards period still active at slot {slot}"

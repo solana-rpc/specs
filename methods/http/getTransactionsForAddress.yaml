@@ -1,0 +1,221 @@
+name: getTransactionsForAddress
+status: standard
+summary: Returns paginated transactions that involve an address, with optional transaction, time, status, and token-account filters.
+params:
+  - name: address
+    required: true
+    summary: Address whose transaction history to search.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Query configuration.
+    schema:
+      type: object
+      properties:
+        transactionDetails:
+          type: string
+          enum: [signatures, full]
+          description: Result detail level. Defaults to signatures.
+        sortOrder:
+          type: string
+          enum: [asc, desc]
+          description: Slot and transaction-index order. Defaults to desc.
+        limit:
+          type: integer
+          minimum: 1
+          description: Requested page size. Implementations may cap the result below this value.
+        paginationToken:
+          description: Opaque cursor returned by the previous page.
+          oneOf:
+            - { $ref: '#/components/schemas/Signature' }
+            - type: string
+              pattern: '^[0-9]+:[0-9]+$'
+              description: Slot and transaction-index cursor.
+        beforeSlot:
+          description: Exclusive alias for filters.slot.lt.
+          allOf:
+            - $ref: '#/components/schemas/Slot'
+        untilSlot:
+          description: Exclusive alias for filters.slot.gt.
+          allOf:
+            - $ref: '#/components/schemas/Slot'
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+        encoding:
+          type: string
+          enum: [json, jsonParsed, base58, base64]
+          description: Encoding for full transaction results. Defaults to json.
+        maxSupportedTransactionVersion:
+          description: Highest transaction version the caller can decode. Omitting it means only legacy transactions are acceptable.
+          allOf:
+            - $ref: '#/components/schemas/U8'
+        filters:
+          type: object
+          properties:
+            slot:
+              type: object
+              description: Inclusive or exclusive slot bounds. Equality is not supported.
+              properties:
+                gte: { $ref: '#/components/schemas/Slot' }
+                gt: { $ref: '#/components/schemas/Slot' }
+                lte: { $ref: '#/components/schemas/Slot' }
+                lt: { $ref: '#/components/schemas/Slot' }
+            blockTime:
+              type: object
+              description: Inclusive or exclusive Unix timestamp bounds.
+              properties:
+                gte: { $ref: '#/components/schemas/I64' }
+                gt: { $ref: '#/components/schemas/I64' }
+                lte: { $ref: '#/components/schemas/I64' }
+                lt: { $ref: '#/components/schemas/I64' }
+                eq: { $ref: '#/components/schemas/I64' }
+            signature:
+              type: object
+              description: Inclusive or exclusive transaction-position bounds resolved from signatures. Equality is not supported.
+              properties:
+                gte: { $ref: '#/components/schemas/Signature' }
+                gt: { $ref: '#/components/schemas/Signature' }
+                lte: { $ref: '#/components/schemas/Signature' }
+                lt: { $ref: '#/components/schemas/Signature' }
+            status:
+              type: string
+              enum: [any, all, succeeded, failed]
+              description: Transaction execution status. any and all are equivalent. Defaults to any.
+            tokenAccounts:
+              type: string
+              enum: [none, balanceChanged, all]
+              description: Include transactions for token accounts owned by address. Defaults to none.
+result:
+  name: transactions
+  summary: One page of matching transaction summaries or full transaction records and its continuation cursor.
+  schema:
+    anyOf:
+      - title: Signatures
+        type: object
+        required: [data, paginationToken]
+        properties:
+          data:
+            type: array
+            items:
+              type: object
+              required: [signature, slot, transactionIndex, err, memo, blockTime, confirmationStatus]
+              properties:
+                signature: { $ref: '#/components/schemas/Signature' }
+                slot: { $ref: '#/components/schemas/Slot' }
+                transactionIndex: { $ref: '#/components/schemas/U32' }
+                err:
+                  oneOf:
+                    - $ref: '#/components/schemas/TransactionError'
+                    - type: 'null'
+                memo:
+                  oneOf:
+                    - type: string
+                    - type: 'null'
+                blockTime:
+                  oneOf:
+                    - $ref: '#/components/schemas/I64'
+                    - type: 'null'
+                confirmationStatus:
+                  oneOf:
+                    - $ref: '#/components/schemas/ConfirmationStatus'
+                    - type: 'null'
+          paginationToken:
+            oneOf:
+              - { $ref: '#/components/schemas/Signature' }
+              - type: string
+                pattern: '^[0-9]+:[0-9]+$'
+              - type: 'null'
+      - title: Full
+        type: object
+        required: [data, paginationToken]
+        properties:
+          data:
+            type: array
+            items:
+              type: object
+              required: [slot, transactionIndex, blockTime, transaction, meta]
+              properties:
+                slot: { $ref: '#/components/schemas/Slot' }
+                transactionIndex: { $ref: '#/components/schemas/U32' }
+                blockTime:
+                  oneOf:
+                    - $ref: '#/components/schemas/I64'
+                    - type: 'null'
+                transaction:
+                  oneOf:
+                    - title: Binary
+                      type: array
+                      minItems: 2
+                      maxItems: 2
+                      items:
+                        - type: string
+                        - type: string
+                          enum: [base58, base64]
+                    - $ref: '#/components/schemas/UiTransaction'
+                meta:
+                  oneOf:
+                    - $ref: '#/components/schemas/UiTransactionStatusMeta'
+                    - type: 'null'
+                version: { $ref: '#/components/schemas/TransactionVersion' }
+          paginationToken:
+            oneOf:
+              - { $ref: '#/components/schemas/Signature' }
+              - type: string
+                pattern: '^[0-9]+:[0-9]+$'
+              - type: 'null'
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/UnsupportedTransactionVersion'
+examples:
+  - name: signature-page
+    summary: The default signature-only page for an address.
+    params:
+      - name: address
+        value: "Vote111111111111111111111111111111111111111"
+      - name: config
+        value: { limit: 1 }
+    result:
+      name: transactions
+      value:
+        data:
+          - signature: "5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv"
+            slot: 114
+            transactionIndex: 2
+            err: null
+            memo: null
+            blockTime: 1655374970
+            confirmationStatus: finalized
+        paginationToken: "5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv"
+  - name: full-page
+    summary: A full transaction page encoded as base64.
+    params:
+      - name: address
+        value: "Vote111111111111111111111111111111111111111"
+      - name: config
+        value: { transactionDetails: full, encoding: base64, maxSupportedTransactionVersion: 0, sortOrder: asc, limit: 1, filters: { slot: { gte: 114 } } }
+    result:
+      name: transactions
+      value:
+        data:
+          - slot: 114
+            transactionIndex: 2
+            blockTime: 1655374970
+            transaction: ["AQ==", base64]
+            meta: null
+            version: legacy
+        paginationToken: "114:2"
+  - name: slot-aliases
+    summary: Constrain an ascending scan with exclusive whole-slot aliases.
+    params:
+      - name: address
+        value: "Vote111111111111111111111111111111111111111"
+      - name: config
+        value: { sortOrder: asc, beforeSlot: 200, untilSlot: 100, filters: { status: succeeded } }
+    result:
+      name: transactions
+      value: { data: [], paginationToken: null }
+implementations:
+  agave: { status: none }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "reference implementation; processed requires grpc-head-cache; tokenAccounts requires token-owner activity data; configured page caps may be lower than the requested limit" }
