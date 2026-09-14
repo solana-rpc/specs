@@ -1,0 +1,43 @@
+name: getEpochSchedule
+status: standard
+summary: Returns the cluster's epoch schedule parameters.
+params: []
+result:
+  name: epochSchedule
+  summary: Epoch schedule parameters for the cluster.
+  schema:
+    type: object
+    required: [slotsPerEpoch, leaderScheduleSlotOffset, warmup, firstNormalEpoch, firstNormalSlot]
+    properties:
+      slotsPerEpoch: { $ref: '#/components/schemas/U64' }
+      leaderScheduleSlotOffset: { $ref: '#/components/schemas/U64' }
+      warmup: { type: boolean }
+      firstNormalEpoch: { $ref: '#/components/schemas/U64' }
+      firstNormalSlot: { $ref: '#/components/schemas/U64' }
+examples:
+  - name: devnet-warmup
+    summary: A cluster with warmup epochs and 8192 slots per normal epoch.
+    params: []
+    result:
+      name: epochSchedule
+      value:
+        slotsPerEpoch: 8192
+        leaderScheduleSlotOffset: 8192
+        warmup: true
+        firstNormalEpoch: 8
+        firstNormalSlot: 8160
+  - name: mainnet-no-warmup
+    summary: A production cluster with no warmup epochs.
+    params: []
+    result:
+      name: epochSchedule
+      value:
+        slotsPerEpoch: 432000
+        leaderScheduleSlotOffset: 432000
+        warmup: false
+        firstNormalEpoch: 0
+        firstNormalSlot: 0
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "returns a hard-coded 432000-slot, no-warmup schedule; compatible with modern mainnet/devnet clusters but not clusters with a different schedule" }
