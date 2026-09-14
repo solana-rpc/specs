@@ -22,6 +22,12 @@ params:
                 it means only legacy transactions are acceptable.
               allOf:
                 - $ref: '#/components/schemas/U8'
+            slot:
+              description: >-
+                Restrict the lookup to this exact slot. The method returns
+                null when the signature is not present in that slot.
+              allOf:
+                - $ref: '#/components/schemas/Slot'
         - title: DeprecatedEncoding
           description: >-
             A bare encoding string in place of the config object. Accepted by
@@ -100,7 +106,36 @@ examples:
     result:
       name: transaction
       value: null
+  - name: exact-slot
+    summary: Restrict the lookup to the known slot of the transaction.
+    params:
+      - name: signature
+        value: "2nBhEBYYvfaAe16UMNqRHre4YNSskvuYgx3M6E4JP1oDYvZEJHvoPzyUidNgNX5r9sTyN1J9UxtbCXy2rqYcuyuv"
+      - name: config
+        value: { slot: 430, encoding: base64, maxSupportedTransactionVersion: 0 }
+    result:
+      name: transaction
+      value:
+        slot: 430
+        blockTime: null
+        version: legacy
+        transaction:
+          - "AVj7dxHlQ9IrvdYVIjuiRFs1jLaDMHixgrv+qtHBwz51L4/ImLZhszwiyEJDIp7xeBSpm/TX5B7mYzxa+fPOMw0BAAMFJMJVqLw+hJYheizSoYlLm53KzgT82cDVmazarqQKG2GQsLgiqktA+a+FDR4/7xnDX7rsusMwryYVUdixfz1B1Qan1RcZLwqvxvJl4/t3zHragsUp0L47E24tAFUgAAAABqfVFxjHdMkoVmOYaR1etoteuKObS21cc1VbIQAAAAAHYUgdNXR0u3xNdiTr072z2DVec9EQQ/wNo1OAAAAAAAtxOUhPBp2WSjUNJEgfvy70BbxI00fZyEPvFHNfxrtEAQQEAQIDADUCAAAAAQAAAAAAAACtAQAAAAAAAAdUE18R96XTJCe+YfRfUp6WP+YKCy/72ucOL8AoBFSpAA=="
+          - base64
+        meta:
+          err: null
+          status: { Ok: null }
+          fee: 5000
+          preBalances: [1110663066, 1, 1, 1, 1040000000]
+          postBalances: [1110658066, 1, 1, 1, 1040000000]
+          innerInstructions: []
+          logMessages: []
+          preTokenBalances: []
+          postTokenBalances: []
+          rewards: null
+          loadedAddresses: { writable: [], readonly: [] }
+          computeUnitsConsumed: 2366
 implementations:
-  agave: { status: full }
+  agave: { status: partial, notes: "does not recognize the standard slot config member" }
   cloudbreak: { status: none }
-  superbank: { status: partial, notes: "strict config-field rejection; extra non-standard slot param exists but is not part of this spec" }
+  superbank: { status: partial, notes: "supports exact-slot lookups; rejects unknown config fields that Agave ignores" }
