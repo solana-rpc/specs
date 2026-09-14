@@ -1,0 +1,27 @@
+name: getInflationRate
+status: standard
+summary: Returns the current inflation rates.
+params:
+  []
+result:
+  name: inflationRate
+  summary: Current total, validator, and foundation inflation rates.
+  schema:
+    type: object
+    required: [total, validator, foundation, epoch]
+    properties:
+      total: { type: number }
+      validator: { type: number }
+      foundation: { type: number }
+      epoch: { $ref: '#/components/schemas/U64' }
+examples:
+  - name: current-rate
+    summary: Current inflation rates.
+    params: []
+    result:
+      name: inflationRate
+      value: { total: 0.048, validator: 0.032, foundation: 0.016, epoch: 500 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
