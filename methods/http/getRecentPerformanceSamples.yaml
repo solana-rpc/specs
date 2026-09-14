@@ -1,0 +1,40 @@
+name: getRecentPerformanceSamples
+status: standard
+summary: Returns recent validator performance samples.
+params:
+  - name: limit
+    required: false
+    summary: Maximum number of samples. Agave accepts at most 720.
+    schema: { type: integer, minimum: 0, maximum: 720 }
+result:
+  name: samples
+  summary: Recent performance samples.
+  schema:
+    type: array
+    items:
+      type: object
+      required: [slot, numTransactions, numSlots, samplePeriodSecs]
+      properties:
+        slot: { $ref: '#/components/schemas/Slot' }
+        numTransactions: { $ref: '#/components/schemas/U64' }
+        numNonVoteTransactions:
+          oneOf:
+            - { $ref: '#/components/schemas/U64' }
+            - { type: 'null' }
+        numSlots: { $ref: '#/components/schemas/U64' }
+        samplePeriodSecs: { type: integer, minimum: 0, maximum: 65535 }
+errors: []
+examples:
+  - name: one-sample
+    summary: Request one recent sample.
+    params:
+      - name: limit
+        value: 1
+    result:
+      name: samples
+      value:
+        - { slot: 348125, numTransactions: 126, numNonVoteTransactions: 98, numSlots: 60, samplePeriodSecs: 60 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
