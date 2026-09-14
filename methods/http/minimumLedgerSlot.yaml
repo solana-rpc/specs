@@ -1,0 +1,19 @@
+name: minimumLedgerSlot
+status: standard
+summary: Returns the lowest slot for which the node has ledger information.
+params: []
+result:
+  name: slot
+  summary: Lowest slot in the node's retained ledger.
+  schema: { $ref: '#/components/schemas/Slot' }
+examples:
+  - name: minimum-ledger-slot
+    summary: Return the current retained-ledger floor.
+    params: []
+    result:
+      name: slot
+      value: 1234
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "reports the ClickHouse block-storage retention floor, not validator blockstore metadata; returns null when empty" }
