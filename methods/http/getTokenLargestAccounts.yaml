@@ -1,0 +1,59 @@
+name: getTokenLargestAccounts
+status: standard
+summary: Returns the 20 largest token accounts for an SPL Token mint.
+params:
+  - name: mint
+    required: true
+    summary: Address of the token mint.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+result:
+  name: tokenAccounts
+  summary: Largest token accounts, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        type: array
+        maxItems: 20
+        items:
+          type: object
+          required: [address, amount, decimals, uiAmount, uiAmountString]
+          properties:
+            address: { $ref: '#/components/schemas/Pubkey' }
+            amount: { type: string, pattern: '^[0-9]+$' }
+            decimals: { $ref: '#/components/schemas/U8' }
+            uiAmount:
+              oneOf:
+                - type: number
+                - type: 'null'
+            uiAmountString: { type: string }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: largest-accounts
+    summary: Two largest token accounts for a mint.
+    params:
+      - name: mint
+        value: "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr"
+      - name: config
+        value: { commitment: finalized }
+    result:
+      name: tokenAccounts
+      value:
+        context: { slot: 1114, apiVersion: "2.3.0" }
+        value:
+          - { address: "FYjHNoFtSQ4V6hWgkRiiYWqQ9fV2YQwq9K4XJ3HhQx8Z", amount: "100000", decimals: 2, uiAmount: 1000, uiAmountString: "1000" }
+          - { address: "48gpnn8nsmkvkgso7462Z1nFhUrprGQ71u1YLBPzizbY", amount: "9864", decimals: 2, uiAmount: 98.64, uiAmountString: "98.64" }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "tracked-record or SQL path; processed rejected or downgraded; missing or excluded mint data uses Cloudbreak-specific errors" }
+  superbank: { status: none }
