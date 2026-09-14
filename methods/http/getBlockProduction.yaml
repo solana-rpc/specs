@@ -1,0 +1,63 @@
+name: getBlockProduction
+status: standard
+summary: Returns block production statistics for a slot range.
+params:
+  - name: config
+    required: false
+    summary: Identity filter, range, and commitment configuration.
+    schema:
+      type: object
+      properties:
+        identity: { $ref: '#/components/schemas/Pubkey' }
+        range:
+          type: object
+          required: [firstSlot]
+          properties:
+            firstSlot: { $ref: '#/components/schemas/Slot' }
+            lastSlot: { $ref: '#/components/schemas/Slot' }
+        commitment: { $ref: '#/components/schemas/Commitment' }
+result:
+  name: blockProduction
+  summary: Context and production counts grouped by validator identity.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        type: object
+        required: [byIdentity, range]
+        properties:
+          byIdentity:
+            type: object
+            additionalProperties:
+              type: array
+              minItems: 2
+              maxItems: 2
+              items: { $ref: '#/components/schemas/U64' }
+          range:
+            type: object
+            required: [firstSlot, lastSlot]
+            properties:
+              firstSlot: { $ref: '#/components/schemas/Slot' }
+              lastSlot: { $ref: '#/components/schemas/Slot' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/NoSlotHistory'
+examples:
+  - name: identity-and-range
+    summary: Production for one identity in an inclusive range.
+    params:
+      - name: config
+        value: { identity: "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri", range: { firstSlot: 216000000, lastSlot: 216000100 }, commitment: finalized }
+    result:
+      name: blockProduction
+      value:
+        context: { slot: 216000100 }
+        value:
+          byIdentity: { "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri": [101, 99] }
+          range: { firstSlot: 216000000, lastSlot: 216000100 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
