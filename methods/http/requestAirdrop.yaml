@@ -1,0 +1,41 @@
+name: requestAirdrop
+status: standard
+summary: Requests a faucet-funded transfer to an account.
+params:
+  - name: pubkey
+    required: true
+    summary: Recipient account public key.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: lamports
+    required: true
+    summary: Lamports requested from the faucet.
+    schema: { $ref: '#/components/schemas/U64' }
+  - name: config
+    required: false
+    summary: Optional recent blockhash and commitment.
+    schema:
+      type: object
+      properties:
+        recentBlockhash: { $ref: '#/components/schemas/Hash' }
+        commitment: { $ref: '#/components/schemas/Commitment' }
+result:
+  name: signature
+  summary: Base-58 signature of the submitted faucet transaction.
+  schema: { $ref: '#/components/schemas/Signature' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: devnet-airdrop
+    summary: Request one SOL from a configured faucet.
+    params:
+      - name: pubkey
+        value: "Vote111111111111111111111111111111111111111"
+      - name: lamports
+        value: 1000000000
+    result:
+      name: signature
+      value: "5j7sZ3h5xKk9NqYyVVEaVFWuXGKRyuiz5ZvM8QW5goFJ5Yzx6N9fP5qDqDtwaENmJ3wYJ8Bwdz3KznipwHtQpJQm"
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
