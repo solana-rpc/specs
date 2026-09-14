@@ -1,0 +1,46 @@
+name: getBlocks
+status: standard
+summary: Returns slots with confirmed blocks in an inclusive slot range.
+params:
+  - name: startSlot
+    required: true
+    summary: First slot in the range.
+    schema: { $ref: '#/components/schemas/Slot' }
+  - name: endSlot
+    required: false
+    summary: Last slot in the range. Defaults to the highest slot at the requested commitment.
+    schema: { $ref: '#/components/schemas/Slot' }
+  - name: config
+    required: false
+    summary: Configuration object. When endSlot is omitted, implementations may accept this as the second parameter.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: slots
+  summary: Slots in ascending order that have blocks at the requested commitment.
+  schema:
+    type: array
+    items: { $ref: '#/components/schemas/Slot' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+examples:
+  - name: bounded-range
+    summary: Return blocks in an inclusive range at finalized commitment.
+    params:
+      - name: startSlot
+        value: 5
+      - name: endSlot
+        value: 10
+      - name: config
+        value: { commitment: finalized }
+    result:
+      name: slots
+      value: [5, 6, 8, 9, 10]
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "processed requires grpc-head-cache; minContextSlot is unsupported; served from ClickHouse" }
