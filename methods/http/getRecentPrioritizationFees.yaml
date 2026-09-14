@@ -1,0 +1,37 @@
+name: getRecentPrioritizationFees
+status: standard
+summary: Returns recent prioritization fees, optionally scoped to writable accounts.
+params:
+  - name: accounts
+    required: false
+    summary: Up to 128 account public keys used to select fee records.
+    schema:
+      type: array
+      maxItems: 128
+      items: { $ref: '#/components/schemas/Pubkey' }
+result:
+  name: fees
+  summary: Recent slot and prioritization-fee pairs.
+  schema:
+    type: array
+    items:
+      type: object
+      required: [slot, prioritizationFee]
+      properties:
+        slot: { $ref: '#/components/schemas/Slot' }
+        prioritizationFee: { $ref: '#/components/schemas/U64' }
+errors: []
+examples:
+  - name: account-fees
+    summary: Return records applicable to one writable account.
+    params:
+      - name: accounts
+        value: ["Vote111111111111111111111111111111111111111"]
+    result:
+      name: fees
+      value:
+        - { slot: 348125, prioritizationFee: 1000 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
