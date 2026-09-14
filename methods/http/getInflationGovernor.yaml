@@ -1,0 +1,31 @@
+name: getInflationGovernor
+status: standard
+summary: Returns the cluster inflation governor parameters.
+params:
+  - name: commitment
+    required: false
+    summary: Commitment level.
+    schema: { $ref: '#/components/schemas/Commitment' }
+result:
+  name: inflationGovernor
+  summary: Inflation governor parameters as decimal fractions.
+  schema:
+    type: object
+    required: [initial, terminal, taper, foundation, foundationTerm]
+    properties:
+      initial: { type: number }
+      terminal: { type: number }
+      taper: { type: number }
+      foundation: { type: number }
+      foundationTerm: { $ref: '#/components/schemas/U64' }
+examples:
+  - name: governor
+    summary: Cluster inflation configuration.
+    params: []
+    result:
+      name: inflationGovernor
+      value: { initial: 0.15, terminal: 0.015, taper: 0.15, foundation: 0.05, foundationTerm: 7 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
