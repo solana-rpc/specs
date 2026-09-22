@@ -31,7 +31,8 @@ params:
         beforeSlot:
           description: >-
             Start searching below this slot, exclusive. This excludes every
-            transaction in beforeSlot and newer slots.
+            transaction in beforeSlot and newer slots. Unsigned 64-bit
+            integer; zero describes an empty range.
           allOf:
             - $ref: '#/components/schemas/Slot'
         until:
@@ -41,7 +42,8 @@ params:
         untilSlot:
           description: >-
             Stop searching above this slot, exclusive. This excludes every
-            transaction in untilSlot and older slots.
+            transaction in untilSlot and older slots. Unsigned 64-bit integer;
+            zero excludes slot zero.
           allOf:
             - $ref: '#/components/schemas/Slot'
       allOf:
@@ -157,6 +159,16 @@ examples:
           memo: null
           blockTime: 1655374969
           confirmationStatus: finalized
+  - name: empty-slot-range
+    summary: Equal exclusive whole-slot bounds contain no transactions.
+    params:
+      - name: address
+        value: "Vote111111111111111111111111111111111111111"
+      - name: config
+        value: { beforeSlot: 114, untilSlot: 114 }
+    result:
+      name: signatures
+      value: []
 implementations:
   agave: { status: partial, notes: "does not implement beforeSlot or untilSlot" }
   cloudbreak: { status: none }
