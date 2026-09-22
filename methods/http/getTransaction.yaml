@@ -24,7 +24,8 @@ params:
                 - $ref: '#/components/schemas/U8'
             slot:
               description: >-
-                Restrict the lookup to this exact slot. The method returns
+                Exact unsigned 64-bit slot constraint, including zero; omit for
+                an unconstrained signature lookup. A successful lookup returns
                 null when the signature is not present in that slot.
               allOf:
                 - $ref: '#/components/schemas/Slot'
@@ -135,7 +136,17 @@ examples:
           rewards: null
           loadedAddresses: { writable: [], readonly: [] }
           computeUnitsConsumed: 2366
+  - name: exact-slot-mismatch
+    summary: The transaction in the exact-slot example is absent from slot 431.
+    params:
+      - name: signature
+        value: "2nBhEBYYvfaAe16UMNqRHre4YNSskvuYgx3M6E4JP1oDYvZEJHvoPzyUidNgNX5r9sTyN1J9UxtbCXy2rqYcuyuv"
+      - name: config
+        value: { slot: 431, encoding: base64, maxSupportedTransactionVersion: 0 }
+    result:
+      name: transaction
+      value: null
 implementations:
-  agave: { status: partial, notes: "does not recognize the standard slot config member" }
+  agave: { status: partial, notes: "base method supported; does not implement the proposed exact-slot constraint" }
   cloudbreak: { status: none }
   superbank: { status: partial, notes: "supports exact-slot lookups; rejects unknown config fields that Agave ignores" }
