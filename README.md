@@ -11,12 +11,13 @@ are NOT specced here — they enter the standard via the RFC process
 ### Implementation notes
 
 Deviations are recorded per method, but one is cross-cutting and worth knowing
-up front: **cloudbreak does not reproduce Agave's error payloads.** Its
-JSON-RPC `message` field carries an opaque SNAKE_CASE token (e.g.
-`PROCESSED_COMMITMENT_NOT_SUPPORTED`) rather than Agave's interpolated message,
-and its error `data` is always `null` — even for codes where this spec
-documents a `data` schema. Clients that parse Agave's message text or read
-`data` fields must special-case cloudbreak.
+up front: **cloudbreak's error payloads follow Agave's, and the differences
+that remain are deliberate.** Its JSON-RPC `message` field carries Agave's
+interpolated text, and its error `data` carries the documented payload for the
+codes that define one. A small set of errors still differs in code, wording, or
+meaning. [implementations/cloudbreak.md](implementations/cloudbreak.md) lists
+each one and why it stands; clients that dispatch on cloudbreak error payloads
+should read that list.
 
 ## Layout
 
