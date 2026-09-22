@@ -1,0 +1,13 @@
+title: TransactionsForAddressCursor
+description: >-
+  Exclusive transaction-position cursor. Clients should replay returned tokens
+  unchanged with the same query. The position form contains a u64 slot and u32
+  transaction index; the pattern checks syntax, not numeric overflow. A signature
+  resolves to a transaction position, not a lexical ordering boundary.
+oneOf:
+  - title: SignatureCursor
+    allOf:
+      - $ref: '#/components/schemas/Signature'
+  - title: PositionCursor
+    type: string
+    pattern: '^[0-9]+:[0-9]+$'

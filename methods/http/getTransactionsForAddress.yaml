@@ -23,14 +23,12 @@ params:
         limit:
           type: integer
           minimum: 1
-          description: Requested page size. Implementations may cap the result below this value.
+          description: Positive u64 page size; defaults/ceilings are 1000 for signatures and
+            100 for full. Larger requests are clamped, including to lower configured caps.
         paginationToken:
-          description: Opaque cursor returned by the previous page.
-          oneOf:
-            - { $ref: '#/components/schemas/Signature' }
-            - type: string
-              pattern: '^[0-9]+:[0-9]+$'
-              description: Slot and transaction-index cursor.
+          description: Exclusive position cursor; replay with unchanged query options.
+          allOf:
+            - $ref: '#/components/schemas/TransactionsForAddressCursor'
         beforeSlot:
           description: Exclusive alias for filters.slot.lt.
           allOf:
@@ -60,6 +58,7 @@ params:
                 gt: { $ref: '#/components/schemas/Slot' }
                 lte: { $ref: '#/components/schemas/Slot' }
                 lt: { $ref: '#/components/schemas/Slot' }
+                eq: false
             blockTime:
               type: object
               description: Inclusive or exclusive Unix timestamp bounds.
@@ -77,6 +76,7 @@ params:
                 gt: { $ref: '#/components/schemas/Signature' }
                 lte: { $ref: '#/components/schemas/Signature' }
                 lt: { $ref: '#/components/schemas/Signature' }
+                eq: false
             status:
               type: string
               enum: [any, all, succeeded, failed]
@@ -84,18 +84,49 @@ params:
             tokenAccounts:
               type: string
               enum: [none, balanceChanged, all]
-              description: Include transactions for token accounts owned by address. Defaults to none.
+              description: Expand direct-address history with indexed owner activity.
+                balanceChanged restricts only added activity. Defaults to none.
+      allOf:
+        - not:
+            required: [beforeSlot, filters]
+            properties:
+              filters:
+                required: [slot]
+                properties:
+                  slot:
+                    anyOf:
+                      - required: [lt]
+                      - required: [lte]
+        - not:
+            required: [untilSlot, filters]
+            properties:
+              filters:
+                required: [slot]
+                properties:
+                  slot:
+                    anyOf:
+                      - required: [gt]
+                      - required: [gte]
 result:
   name: transactions
   summary: One page of matching transaction summaries or full transaction records and its continuation cursor.
   schema:
-    anyOf:
+    oneOf:
+      - title: Empty
+        type: object
+        required: [data, paginationToken]
+        properties:
+          data:
+            type: array
+            maxItems: 0
+          paginationToken: { type: 'null' }
       - title: Signatures
         type: object
         required: [data, paginationToken]
         properties:
           data:
             type: array
+            minItems: 1
             items:
               type: object
               required: [signature, slot, transactionIndex, err, memo, blockTime, confirmationStatus]
@@ -119,18 +150,14 @@ result:
                   oneOf:
                     - $ref: '#/components/schemas/ConfirmationStatus'
                     - type: 'null'
-          paginationToken:
-            oneOf:
-              - { $ref: '#/components/schemas/Signature' }
-              - type: string
-                pattern: '^[0-9]+:[0-9]+$'
-              - type: 'null'
+          paginationToken: { $ref: '#/components/schemas/TransactionsForAddressCursor' }
       - title: Full
         type: object
         required: [data, paginationToken]
         properties:
           data:
             type: array
+            minItems: 1
             items:
               type: object
               required: [slot, transactionIndex, blockTime, transaction, meta]
@@ -157,12 +184,7 @@ result:
                     - $ref: '#/components/schemas/UiTransactionStatusMeta'
                     - type: 'null'
                 version: { $ref: '#/components/schemas/TransactionVersion' }
-          paginationToken:
-            oneOf:
-              - { $ref: '#/components/schemas/Signature' }
-              - type: string
-                pattern: '^[0-9]+:[0-9]+$'
-              - type: 'null'
+          paginationToken: { $ref: '#/components/schemas/TransactionsForAddressCursor' }
 errors:
   - $ref: '#/components/errors/InvalidParams'
   - $ref: '#/components/errors/MinContextSlotNotReached'
@@ -188,7 +210,7 @@ examples:
             confirmationStatus: finalized
         paginationToken: "5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv"
   - name: full-page
-    summary: A full transaction page encoded as base64.
+    summary: Illustrative full page using the getTransaction serialized fixture; slot/index are example positions.
     params:
       - name: address
         value: "Vote111111111111111111111111111111111111111"
@@ -201,7 +223,7 @@ examples:
           - slot: 114
             transactionIndex: 2
             blockTime: 1655374970
-            transaction: ["AQ==", base64]
+            transaction: ["AVj7dxHlQ9IrvdYVIjuiRFs1jLaDMHixgrv+qtHBwz51L4/ImLZhszwiyEJDIp7xeBSpm/TX5B7mYzxa+fPOMw0BAAMFJMJVqLw+hJYheizSoYlLm53KzgT82cDVmazarqQKG2GQsLgiqktA+a+FDR4/7xnDX7rsusMwryYVUdixfz1B1Qan1RcZLwqvxvJl4/t3zHragsUp0L47E24tAFUgAAAABqfVFxjHdMkoVmOYaR1etoteuKObS21cc1VbIQAAAAAHYUgdNXR0u3xNdiTr072z2DVec9EQQ/wNo1OAAAAAAAtxOUhPBp2WSjUNJEgfvy70BbxI00fZyEPvFHNfxrtEAQQEAQIDADUCAAAAAQAAAAAAAACtAQAAAAAAAAdUE18R96XTJCe+YfRfUp6WP+YKCy/72ucOL8AoBFSpAA==", base64]
             meta: null
             version: legacy
         paginationToken: "114:2"
@@ -215,7 +237,26 @@ examples:
     result:
       name: transactions
       value: { data: [], paginationToken: null }
+  - name: continue-within-slot
+    summary: Continue below index 2 in slot 114 with unchanged query options.
+    params:
+      - name: address
+        value: "Vote111111111111111111111111111111111111111"
+      - name: config
+        value: { limit: 1, sortOrder: desc, paginationToken: "114:2" }
+    result:
+      name: transactions
+      value:
+        data:
+          - signature: "4Ku4a4tGXKtLmVzc8f9JS4mCVpjcnFmLYCLYNvMwBvkPRWA1zVwPz5FvBQTn9BqfE4TSaLLnDvNhZ1Kv1rzYYGKW"
+            slot: 114
+            transactionIndex: 1
+            err: null
+            memo: null
+            blockTime: 1655374970
+            confirmationStatus: finalized
+        paginationToken: "114:1"
 implementations:
   agave: { status: none }
   cloudbreak: { status: none }
-  superbank: { status: partial, notes: "reference implementation; processed requires grpc-head-cache; tokenAccounts requires token-owner activity data; configured page caps may be lower than the requested limit" }
+  superbank: { status: partial, notes: "reference release; filtered processed coverage, unresolved signature bounds and missing full payloads have limitations documented in the method notes and RFC" }
