@@ -1,0 +1,18 @@
+name: getMaxRetransmitSlot
+status: standard
+summary: Returns the highest slot retransmitted by this node.
+params: []
+result:
+  name: slot
+  summary: Highest retransmit slot observed by the node.
+  schema: { $ref: '#/components/schemas/Slot' }
+errors: []
+examples:
+  - name: current
+    summary: Return the local retransmit watermark.
+    params: []
+    result: { name: slot, value: 348125 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
