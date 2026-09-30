@@ -1,0 +1,55 @@
+name: isBlockhashValid
+status: standard
+summary: Returns whether a blockhash remains valid for transaction processing at the requested commitment.
+params:
+  - name: blockhash
+    required: true
+    summary: Blockhash to test.
+    schema: { $ref: '#/components/schemas/Hash' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: isValid
+  summary: True when the blockhash remains valid, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value: { type: boolean }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: valid-blockhash
+    summary: A recent blockhash at confirmed commitment.
+    params:
+      - name: blockhash
+        value: "EkSnNWid2cvwEVnVx9aBqawnmiCNiDgp3gUdkDPTKN1N"
+      - name: config
+        value: { commitment: confirmed }
+    result:
+      name: isValid
+      value:
+        context: { slot: 2795, apiVersion: "2.3.0" }
+        value: true
+  - name: expired-blockhash
+    summary: A blockhash that has aged out of the recent blockhash queue.
+    params:
+      - name: blockhash
+        value: "9tLdSNRmVJBqZ1qNKtQpV4nHhtSk8dW9wLGeEwjZ4iFo"
+    result:
+      name: isValid
+      value:
+        context: { slot: 5000, apiVersion: "2.3.0" }
+        value: false
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "ClickHouse-backed recent-block window; processed requires grpc-head-cache" }
