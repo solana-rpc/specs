@@ -1,0 +1,36 @@
+name: getStakeMinimumDelegation
+status: standard
+summary: Returns the minimum stake delegation in lamports.
+params:
+  - name: config
+    required: false
+    summary: Commitment and minimum context slot.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: minimumDelegation
+  summary: Minimum delegation in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+examples:
+  - name: finalized
+    summary: Return the finalized minimum delegation.
+    params:
+      - name: config
+        value: { commitment: finalized }
+    result:
+      name: minimumDelegation
+      value: { context: { slot: 123, apiVersion: "3.0.0" }, value: 1000000000 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
