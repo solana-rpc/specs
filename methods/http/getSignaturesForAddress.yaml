@@ -28,10 +28,27 @@ params:
             block.
           allOf:
             - $ref: '#/components/schemas/Signature'
+        beforeSlot:
+          description: >-
+            Start searching below this slot, exclusive. This excludes every
+            transaction in beforeSlot and newer slots.
+          allOf:
+            - $ref: '#/components/schemas/Slot'
         until:
           description: Search until this signature, exclusive, if found before `limit` is reached.
           allOf:
             - $ref: '#/components/schemas/Signature'
+        untilSlot:
+          description: >-
+            Stop searching above this slot, exclusive. This excludes every
+            transaction in untilSlot and older slots.
+          allOf:
+            - $ref: '#/components/schemas/Slot'
+      allOf:
+        - not:
+            required: [before, beforeSlot]
+        - not:
+            required: [until, untilSlot]
 result:
   name: signatures
   summary: Matching transaction signatures, ordered newest first.
@@ -118,7 +135,29 @@ examples:
           memo: null
           blockTime: 1655374969
           confirmationStatus: finalized
+  - name: slot-bounded
+    summary: Transactions strictly between two slot cursors.
+    params:
+      - name: address
+        value: "Vote111111111111111111111111111111111111111"
+      - name: config
+        value: { beforeSlot: 114, untilSlot: 111, limit: 2, commitment: finalized }
+    result:
+      name: signatures
+      value:
+        - signature: "4Ku4a4tGXKtLmVzc8f9JS4mCVpjcnFmLYCLYNvMwBvkPRWA1zVwPz5FvBQTn9BqfE4TSaLLnDvNhZ1Kv1rzYYGKW"
+          slot: 113
+          err: null
+          memo: "[12] hello, world"
+          blockTime: 1655374970
+          confirmationStatus: finalized
+        - signature: "3Vk9BmyMKMLBLdmQd7fs2mZLwLK6yvBEsAqRK4gZfXAjTfYyeCLTQ9pVAyRmY8sJ2QxRJmCUvXvBmXMdEeCezFvj"
+          slot: 112
+          err: { InstructionError: [0, { Custom: 1 }] }
+          memo: null
+          blockTime: 1655374969
+          confirmationStatus: finalized
 implementations:
-  agave: { status: full }
+  agave: { status: partial, notes: "does not implement beforeSlot or untilSlot" }
   cloudbreak: { status: none }
-  superbank: { status: full, notes: "default/max limit env-tunable (default 1000); vendor beforeSlot/untilSlot params not specced here" }
+  superbank: { status: full, notes: "supports exclusive slot cursors; default/max limit env-tunable (default 1000)" }
