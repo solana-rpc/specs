@@ -16,6 +16,7 @@ export interface SpecSource {
   schemas: Record<string, any>
   errors: Record<string, any>
   unpaired: string[]
+  compatibility?: any
 }
 
 export function loadSpec(root: string): SpecSource {
@@ -67,5 +68,7 @@ export function loadSpec(root: string): SpecSource {
     ? (parse(fs.readFileSync(errorsFile, 'utf8')) ?? {})
     : {}
 
-  return { methods, schemas, errors, unpaired }
+  const compatibilityFile = path.join(root, 'compatibility.yaml')
+  const compatibility = fs.existsSync(compatibilityFile) ? parse(fs.readFileSync(compatibilityFile, 'utf8')) : undefined
+  return { methods, schemas, errors, unpaired, ...(fs.existsSync(compatibilityFile) ? { compatibility } : {}) }
 }

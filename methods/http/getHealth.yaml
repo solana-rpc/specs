@@ -21,3 +21,8 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: partial, notes: "health flag from service_health table, not cluster-tip distance" }
   superbank: { status: partial, notes: "ok iff a latest finalized slot resolves from ClickHouse; numSlotsBehind always null" }
+
+category: Cluster
+tests:
+  - name: healthy
+    params: []

@@ -84,3 +84,67 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: none }
   superbank: { status: none }
+
+category: Subscriptions
+tests:
+  - name: subscribe
+    params:
+      - $fixture: clock
+      - encoding: base64
+        commitment: processed
+        dataSlice:
+          offset: 0
+          length: 0
+        minContextSlot:
+          $fixture: futureSlot
+    capture:
+      subscription: ""
+  - name: deduplication
+    params:
+      - $fixture: clock
+      - encoding: base64
+        commitment: processed
+        dataSlice:
+          offset: 0
+          length: 0
+        minContextSlot:
+          $fixture: futureSlot
+    expect:
+      result:
+        const:
+          $fixture: subscription
+  - name: notification
+    observe: true
+    subscription:
+      $fixture: subscription
+    expect:
+      assertions:
+        - path: /result/value/data/0
+          base64Bytes: 40
+      result:
+        type: object
+        required:
+          - result
+        properties:
+          result:
+            type: object
+            required:
+              - value
+            properties:
+              value:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      - type: string
+                        minLength: 56
+                        maxLength: 56
+                      - const: base64
+  - name: invalid-pubkey
+    params:
+      - bad!
+    expect:
+      error: InvalidParams

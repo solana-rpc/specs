@@ -122,3 +122,69 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: none }
   superbank: { status: full, notes: "default/max limit env-tunable (default 1000); vendor beforeSlot/untilSlot params not specced here" }
+
+category: Ledger
+tests:
+  - name: limited-history
+    params:
+      - $fixture: address
+        default:
+          $fixture: account
+      - limit: 5
+    expect:
+      available:
+        minItems: 1
+      result:
+        maxItems: 5
+      assertions:
+        - path: ""
+          orderBy: /slot
+          direction: descending
+  - name: invalid-limit
+    params:
+      - $fixture: account
+      - limit:
+          $matrix: limit
+    expect:
+      error: InvalidParams
+    matrix:
+      limit:
+        - 0
+        - 1001
+  - name: processed-rejected
+    params:
+      - $fixture: account
+      - commitment: processed
+    expect:
+      error: InvalidParams
+  - name: missing-cursor
+    params:
+      - $fixture: address
+        default:
+          $fixture: account
+      - before:
+          $fixture: missingSignature
+        limit: 1
+    expect:
+      error: FilterTransactionNotFound
+  - name: missing-required-params
+    params: []
+    expect:
+      error: InvalidParams
+  - name: invalid-base58
+    params:
+      - not-a-base58-key!
+      - limit: 5
+    expect:
+      error: InvalidParams
+  - name: min-context-slot
+    params:
+      - $fixture: address
+        default:
+          $fixture: account
+      - limit: 5
+        minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached
