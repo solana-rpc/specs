@@ -5,6 +5,7 @@ description: >-
 oneOf:
   - $ref: '#/components/schemas/MemcmpFilter'
   - $ref: '#/components/schemas/DataSizeFilter'
+  - $ref: '#/components/schemas/ValueCmpFilter'
   - title: TokenAccountState
     description: >-
       Matches accounts that deserialize as an initialized SPL Token account.

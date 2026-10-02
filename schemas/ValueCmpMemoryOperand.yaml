@@ -1,0 +1,15 @@
+title: ValueCmpMemoryOperand
+description: Reads one unsigned little-endian integer from account data.
+type: object
+required: [Mem]
+properties:
+  Mem:
+    type: object
+    required: [offset, value_type]
+    properties:
+      offset:
+        type: integer
+        minimum: 0
+      value_type:
+        type: string
+        enum: [U8, U16, U32, U64, U128]
