@@ -1,0 +1,46 @@
+name: getBlocksWithLimit
+status: standard
+summary: Returns up to a requested number of slots with confirmed blocks from a start slot.
+params:
+  - name: startSlot
+    required: true
+    summary: First slot to inspect.
+    schema: { $ref: '#/components/schemas/Slot' }
+  - name: limit
+    required: true
+    summary: Maximum number of slots to return. Must not exceed 500,000.
+    schema: { $ref: '#/components/schemas/U64' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: slots
+  summary: Up to limit slots in ascending order that have blocks at the requested commitment.
+  schema:
+    type: array
+    items: { $ref: '#/components/schemas/Slot' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+examples:
+  - name: bounded-list
+    summary: Return up to three slots with finalized blocks.
+    params:
+      - name: startSlot
+        value: 5
+      - name: limit
+        value: 3
+      - name: config
+        value: { commitment: finalized }
+    result:
+      name: slots
+      value: [5, 6, 8]
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "processed requires grpc-head-cache; minContextSlot is unsupported; served from ClickHouse" }
