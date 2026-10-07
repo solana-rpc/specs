@@ -1,0 +1,31 @@
+name: getBlockTime
+status: standard
+summary: Returns the estimated production time of the block at a slot.
+params:
+  - name: slot
+    required: true
+    summary: Slot of the block.
+    schema: { $ref: '#/components/schemas/Slot' }
+result:
+  name: blockTime
+  summary: Estimated Unix timestamp in seconds, or null when the block has no recorded time.
+  schema:
+    oneOf:
+      - { $ref: '#/components/schemas/I64' }
+      - type: 'null'
+        description: The block has no recorded timestamp.
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: block-time
+    summary: Return the estimated time for a block.
+    params:
+      - name: slot
+        value: 5
+    result:
+      name: blockTime
+      value: 1574721591
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "missing or skipped slots return LongTermStorageSlotSkipped instead of null; served from ClickHouse" }
