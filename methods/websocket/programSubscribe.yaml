@@ -1,0 +1,61 @@
+name: programSubscribe
+status: standard
+summary: Subscribe to changes of accounts owned by a program.
+params:
+  - name: programId
+    required: true
+    summary: Program address whose owned accounts to watch.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Account filters, encoding, commitment, and subscription options.
+    schema:
+      type: object
+      properties:
+        filters:
+          type: array
+          maxItems: 4
+          items: { $ref: '#/components/schemas/GpaFilter' }
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        encoding: { $ref: '#/components/schemas/AccountEncoding' }
+        dataSlice: { $ref: '#/components/schemas/DataSlice' }
+        minContextSlot:
+          allOf:
+            - $ref: '#/components/schemas/Slot'
+          description: Accepted but ignored by the PubSub handler.
+        withContext: { type: boolean }
+        sortResults: { type: boolean }
+result:
+  name: subscriptionId
+  summary: Identifier for this connection's subscription.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: basic
+    summary: Create the subscription.
+    params:
+      - name: programId
+        value: 'CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12'
+    result:
+      name: subscriptionId
+      value: 1
+notification:
+  name: programNotification
+  description: Notification payload sent for this subscription.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription: { $ref: '#/components/schemas/U64' }
+      result:
+        type: object
+        required: [context, value]
+        properties:
+          context: { $ref: '#/components/schemas/RpcResponseContext' }
+          value: { $ref: '#/components/schemas/RpcKeyedAccount' }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
