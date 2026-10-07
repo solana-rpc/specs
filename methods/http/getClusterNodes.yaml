@@ -1,0 +1,41 @@
+name: getClusterNodes
+status: standard
+summary: Returns contact information for visible cluster nodes.
+params: []
+result:
+  name: nodes
+  summary: Contact records for nodes visible through gossip.
+  schema:
+    type: array
+    items:
+      type: object
+      required: [pubkey]
+      properties:
+        pubkey: { $ref: '#/components/schemas/Pubkey' }
+        gossip: { type: [string, 'null'] }
+        tvu: { type: [string, 'null'] }
+        tpu: { type: [string, 'null'] }
+        tpuQuic: { type: [string, 'null'] }
+        tpuForwards: { type: [string, 'null'] }
+        tpuForwardsQuic: { type: [string, 'null'] }
+        tpuVote: { type: [string, 'null'] }
+        serveRepair: { type: [string, 'null'] }
+        rpc: { type: [string, 'null'] }
+        pubsub: { type: [string, 'null'] }
+        version: { type: [string, 'null'] }
+        clientId: { type: [string, 'null'] }
+        featureSet: { type: [integer, 'null'], minimum: 0, maximum: 4294967295 }
+        shredVersion: { type: [integer, 'null'], minimum: 0, maximum: 65535 }
+errors: []
+examples:
+  - name: node
+    summary: Return a visible gossip peer.
+    params: []
+    result:
+      name: nodes
+      value:
+        - { pubkey: "Vote111111111111111111111111111111111111111", gossip: "127.0.0.1:8001", rpc: "127.0.0.1:8899", version: null, featureSet: null, shredVersion: 1 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
