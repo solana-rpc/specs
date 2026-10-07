@@ -35,3 +35,24 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: partial, notes: "processed rejected/downgraded; slot read from Postgres, not bank state" }
   superbank: { status: partial, notes: "processed requires grpc-head-cache build + config; slot derived from ClickHouse" }
+
+category: Ledger
+tests:
+  - name: default
+    params: []
+  - name: commitment
+    params:
+      - commitment:
+          $matrix: commitment
+    matrix:
+      commitment:
+        - processed
+        - confirmed
+        - finalized
+  - name: min-context-slot
+    params:
+      - minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached

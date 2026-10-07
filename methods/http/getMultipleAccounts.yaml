@@ -64,3 +64,199 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: partial, notes: "cap configurable via max-multiple-accounts (default 100); default encoding base64" }
   superbank: { status: none }
+
+category: Accounts
+tests:
+  - name: order-duplicates-and-null
+    params:
+      - - $fixture: account
+        - $fixture: missingAccount
+        - $fixture: account
+    expect:
+      shape:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: array
+            minItems: 3
+            maxItems: 3
+            items:
+              - true
+              - type: "null"
+              - true
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            items:
+              - not:
+                  type: "null"
+      assertions:
+        - path: /value/0
+          equalsPath: /value/2
+  - name: encoding-base64
+    params:
+      - - $fixture: account
+      - encoding: base64
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            minItems: 1
+            items:
+              - not:
+                  type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: array
+            items:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    - type: string
+                    - const: base64
+                  minItems: 2
+                  maxItems: 2
+  - name: encoding-base58
+    params:
+      - - $fixture: account
+      - encoding: base58
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            minItems: 1
+            items:
+              - not:
+                  type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: array
+            items:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    - type: string
+                    - const: base58
+                  minItems: 2
+                  maxItems: 2
+  - name: encoding-jsonParsed
+    params:
+      - - $fixture: account
+      - encoding: jsonParsed
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            minItems: 1
+            items:
+              - not:
+                  type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: array
+            items:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  oneOf:
+                    - type: object
+                    - type: array
+                      items:
+                        - type: string
+                        - const: base64
+                      minItems: 2
+                      maxItems: 2
+  - name: default-encoding
+    params:
+      - - $fixture: account
+    expect:
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            minItems: 1
+            items:
+              - not:
+                  type: "null"
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: array
+            items:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    - type: string
+                    - const: base64
+                  minItems: 2
+                  maxItems: 2
+  - name: empty-list
+    params:
+      - []
+    expect:
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            maxItems: 0
+  - name: missing-required-params
+    params: []
+    expect:
+      error: InvalidParams
+  - name: min-context-slot
+    params:
+      - - $fixture: account
+        - $fixture: missingAccount
+        - $fixture: account
+      - minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached

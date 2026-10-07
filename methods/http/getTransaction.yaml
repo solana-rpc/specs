@@ -104,3 +104,150 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: none }
   superbank: { status: partial, notes: "strict config-field rejection; extra non-standard slot param exists but is not part of this spec" }
+
+category: Ledger
+tests:
+  - name: encoding-json
+    params:
+      - $fixture: signature
+      - encoding: json
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        type: object
+        required:
+          - transaction
+        properties:
+          transaction:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: object
+                required:
+                  - accountKeys
+                properties:
+                  accountKeys:
+                    type: array
+                    items:
+                      type: string
+  - name: encoding-jsonParsed
+    params:
+      - $fixture: signature
+      - encoding: jsonParsed
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        type: object
+        required:
+          - transaction
+        properties:
+          transaction:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: object
+                required:
+                  - accountKeys
+                properties:
+                  accountKeys:
+                    type: array
+                    items:
+                      type: object
+          meta:
+            anyOf:
+              - type: "null"
+              - not:
+                  required:
+                    - loadedAddresses
+  - name: encoding-base58
+    params:
+      - $fixture: signature
+      - encoding: base58
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        type: object
+        required:
+          - transaction
+        properties:
+          transaction:
+            type: array
+            items:
+              - type: string
+              - const: base58
+            minItems: 2
+            maxItems: 2
+  - name: encoding-base64
+    params:
+      - $fixture: signature
+      - encoding: base64
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        type: object
+        required:
+          - transaction
+        properties:
+          transaction:
+            type: array
+            items:
+              - type: string
+              - const: base64
+            minItems: 2
+            maxItems: 2
+  - name: encoding-binary
+    params:
+      - $fixture: signature
+      - encoding: binary
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        type: object
+        required:
+          - transaction
+        properties:
+          transaction:
+            type: string
+  - name: not-found
+    params:
+      - $fixture: missingSignature
+      - maxSupportedTransactionVersion: 0
+    expect:
+      result:
+        type: "null"
+  - name: processed-rejected
+    params:
+      - $fixture: missingSignature
+      - commitment: processed
+    expect:
+      error: InvalidParams
+  - name: missing-required-params
+    params: []
+    expect:
+      error: InvalidParams
+  - name: invalid-base58
+    params:
+      - not-a-base58-key!
+      - encoding: json
+        maxSupportedTransactionVersion: 0
+    expect:
+      error: InvalidParams

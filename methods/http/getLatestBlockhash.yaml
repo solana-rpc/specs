@@ -53,3 +53,24 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: none }
   superbank: { status: partial, notes: "processed requires grpc-head-cache; blockhash from latest stored block" }
+
+category: Ledger
+tests:
+  - name: default
+    params: []
+  - name: commitment
+    params:
+      - commitment:
+          $matrix: commitment
+    matrix:
+      commitment:
+        - processed
+        - confirmed
+        - finalized
+  - name: min-context-slot
+    params:
+      - minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached
