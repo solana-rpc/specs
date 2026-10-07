@@ -37,8 +37,7 @@ variant.
 
 ## Implementation notes
 
-- **cloudbreak**: rejects `processed` (-32003) or downgrades it; default
-  encoding is base58 ("binary") here but base64 for `getMultipleAccounts` —
-  a documented inconsistency. `jsonParsed` token accounts whose mint row is
-  missing fall back to unparsed encoding.
-- **superbank**: method not served.
+- [**Cloudbreak**](../../implementations/cloudbreak.md): rejects `processed`
+  (-32003) or downgrades it. Its method-specific default encoding matches
+  Agave. Source review suggests that a `jsonParsed` token account whose mint
+  row is missing falls back to unparsed encoding, but this needs a live test.

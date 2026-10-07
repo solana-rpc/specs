@@ -51,9 +51,10 @@ bare base58 string rather than a `[data, encoding]` tuple.
 
 ## Implementation notes
 
-- **cloudbreak**:
-  - accepts but **ignores** `sortResults` — results come back in database
-    order regardless of the value passed.
+- [**Cloudbreak**](../../implementations/cloudbreak.md):
+  - accepts but **ignores** `sortResults`. Cloudbreak does not impose a final
+    pubkey order across all query paths; live tests must establish the returned
+    order.
   - restricts gPA against SPL Token / Token-2022 to queries shaped like
     `getTokenAccountsByOwner` / `getTokenAccountsByDelegate` (owner or
     delegate memcmp) or filtered by mint; anything else is rejected with
@@ -66,4 +67,3 @@ bare base58 string rather than a `[data, encoding]` tuple.
     error object, so clients must treat a parse failure as a possible
     server-side error rather than a malformed spec response.
   - rejects `processed` commitment (-32003) or downgrades it.
-- **superbank**: method not served (history-only RPC).

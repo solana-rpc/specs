@@ -34,7 +34,6 @@ form independently of the other entries.
 
 ## Implementation notes
 
-- **cloudbreak**: the input cap is configurable via `max-multiple-accounts`
+- [**Cloudbreak**](../../implementations/cloudbreak.md): the input cap is configurable via `max-multiple-accounts`
   (default 100); default encoding is `base64`. `processed` commitment is
   rejected (-32003) or downgraded.
-- **superbank**: method not served.
