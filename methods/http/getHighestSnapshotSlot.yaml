@@ -1,0 +1,30 @@
+name: getHighestSnapshotSlot
+status: standard
+summary: Returns the highest available full and incremental snapshot slots.
+params:
+  []
+result:
+  name: snapshotSlots
+  summary: Highest snapshot archive slots.
+  schema:
+    type: object
+    required: [full, incremental]
+    properties:
+      full: { $ref: '#/components/schemas/Slot' }
+      incremental:
+        oneOf:
+          - { $ref: '#/components/schemas/Slot' }
+          - { type: 'null' }
+errors:
+  - $ref: '#/components/errors/NoSnapshot'
+examples:
+  - name: full-and-incremental
+    summary: A node with both snapshot archive types.
+    params: []
+    result:
+      name: snapshotSlots
+      value: { full: 250000000, incremental: 250001000 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
