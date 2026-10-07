@@ -1,0 +1,36 @@
+name: slotSubscribe
+status: standard
+summary: Subscribe to slot progress notifications.
+params: []
+result:
+  name: subscriptionId
+  summary: Identifier for this connection's subscription.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: basic
+    summary: Create the subscription.
+    params: []
+    result:
+      name: subscriptionId
+      value: 1
+notification:
+  name: slotNotification
+  description: Notification payload sent for this subscription.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription: { $ref: '#/components/schemas/U64' }
+      result:
+        type: object
+        required: [slot, parent, root]
+        properties:
+          slot: { $ref: '#/components/schemas/Slot' }
+          parent: { $ref: '#/components/schemas/Slot' }
+          root: { $ref: '#/components/schemas/Slot' }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
