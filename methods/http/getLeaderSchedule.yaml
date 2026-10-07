@@ -1,0 +1,41 @@
+name: getLeaderSchedule
+status: standard
+summary: Returns the leader schedule for an epoch.
+params:
+  - name: slot
+    required: false
+    summary: Slot whose epoch schedule to return.
+    schema: { $ref: '#/components/schemas/Slot' }
+  - name: config
+    required: false
+    summary: Identity filter and commitment configuration.
+    schema:
+      type: object
+      properties:
+        identity: { $ref: '#/components/schemas/Pubkey' }
+        commitment: { $ref: '#/components/schemas/Commitment' }
+result:
+  name: leaderSchedule
+  summary: Map from validator identity to slot indexes, or null when unavailable.
+  schema:
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: array
+          items: { $ref: '#/components/schemas/U64' }
+      - type: 'null'
+examples:
+  - name: filtered-epoch
+    summary: Schedule for one validator in the epoch containing the slot.
+    params:
+      - name: slot
+        value: 216000000
+      - name: config
+        value: { identity: "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri", commitment: finalized }
+    result:
+      name: leaderSchedule
+      value: { "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri": [0, 4, 8] }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
