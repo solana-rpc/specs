@@ -1,0 +1,35 @@
+name: getSlotLeaders
+status: standard
+summary: Returns the leaders for a range of slots.
+params:
+  - name: startSlot
+    required: true
+    summary: First slot to query.
+    schema: { $ref: '#/components/schemas/Slot' }
+  - name: limit
+    required: true
+    summary: Number of consecutive slot leaders to return.
+    schema: { $ref: '#/components/schemas/U64' }
+result:
+  name: identities
+  summary: Leader identity public keys in slot order.
+  schema:
+    type: array
+    items: { $ref: '#/components/schemas/Pubkey' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: three-slots
+    summary: Leaders for three consecutive slots.
+    params:
+      - name: startSlot
+        value: 216000000
+      - name: limit
+        value: 3
+    result:
+      name: identities
+      value: ["83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri", "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri", "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri"]
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
