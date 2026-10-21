@@ -9,3 +9,4 @@ Agave accepts base58 by default and base64 when requested. It decodes, sanitizes
 ## Implementation notes
 
 - [**Agave**](../../implementations/agave.md): reference implementation. See the pinned [handler and preflight path](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3925-L4068).
+- [**Yellowstone Jet**](../../implementations/jet.md): partial implementation. Jet decodes and sanitizes base58 or base64 transactions before TPU forwarding, but it does not perform preflight simulation and ignores `preflightCommitment`, `maxRetries`, and `minContextSlot`.
