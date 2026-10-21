@@ -10,7 +10,7 @@ are NOT specced here — they enter the standard via the RFC process
 
 ### Implementation notes
 
-Deviations are recorded per method and summarized in the implementation profiles. The [Cloudbreak profile](implementations/cloudbreak.md) lists its accepted client-visible differences from Agave, including configured index scope, health gating, optional methods, and processed-commitment policy.
+Deviations are recorded per method and summarized in the implementation profiles. 
 
 ## Layout
 
