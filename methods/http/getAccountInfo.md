@@ -38,8 +38,4 @@ variant.
 ## Implementation notes
 
 - [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3340-L3351).
-- **cloudbreak**: rejects `processed` (-32003) or downgrades it; default
-  encoding is base58 ("binary") here but base64 for `getMultipleAccounts` —
-  a documented inconsistency. `jsonParsed` token accounts whose mint row is
-  missing fall back to unparsed encoding.
-- **superbank**: method not served.
+- [**Cloudbreak**](../../implementations/cloudbreak.md): the optional `processed-accounts` module serves native `processed`; other deployments reject it or serve confirmed state according to policy. Its default encoding and standard errors match Agave. On a filtered index, an account owned by an excluded program returns `value: null`. Source review shows that a `jsonParsed` token account whose mint row is missing falls back to the base64 tuple.

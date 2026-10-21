@@ -10,14 +10,7 @@ are NOT specced here — they enter the standard via the RFC process
 
 ### Implementation notes
 
-Deviations are recorded per method, but one is cross-cutting and worth knowing
-up front: **cloudbreak's error payloads follow Agave's, and the differences
-that remain are deliberate.** Its JSON-RPC `message` field carries Agave's
-interpolated text, and its error `data` carries the documented payload for the
-codes that define one. A small set of errors still differs in code, wording, or
-meaning. [implementations/cloudbreak.md](implementations/cloudbreak.md) lists
-each one and why it stands; clients that dispatch on cloudbreak error payloads
-should read that list.
+Deviations are recorded per method and summarized in the implementation profiles. The [Cloudbreak profile](implementations/cloudbreak.md) lists its accepted client-visible differences from Agave, including configured index scope, health gating, optional methods, and processed-commitment policy.
 
 ## Layout
 

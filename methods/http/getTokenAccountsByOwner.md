@@ -40,9 +40,4 @@ mint or to a single token program.
 ## Implementation notes
 
 - [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3540-L3554).
-- **cloudbreak**: restricts the `programId` filter to the two known token
-  programs (SPL Token and Token-2022) and rejects others with -32602.
-  Rejects `processed` commitment (-32003) or downgrades it to `confirmed`.
-  Its sibling `getTokenAccountsByDelegate` matches the delegate by byte
-  layout and supports legacy SPL Token only.
-- **superbank**: method not served (history-only RPC).
+- [**Cloudbreak**](../../implementations/cloudbreak.md): restricts `programId` to SPL Token and Token-2022 and rejects other programs with -32602. Its sibling `getTokenAccountsByDelegate` supports both token programs. The shared handler enforces `minContextSlot`, validates mint ownership, and returns pubkeys in ascending order. Native `processed` is intentionally unsupported; deployments reject it or serve confirmed state according to policy.
