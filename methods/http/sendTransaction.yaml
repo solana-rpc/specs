@@ -8,7 +8,7 @@ params:
     schema: { type: string, minLength: 1 }
   - name: config
     required: false
-    summary: Preflight, encoding, retry, and context configuration.
+    summary: Preflight, encoding, retry, context, and forwarding policy configuration.
     schema:
       type: object
       properties:
@@ -17,6 +17,11 @@ params:
         encoding: { type: string, enum: [base58, base64] }
         maxRetries: { type: integer, minimum: 0 }
         minContextSlot: { $ref: '#/components/schemas/Slot' }
+        forwardingPolicies:
+          type: array
+          description: Ordered Yellowstone Shield policy account addresses used to select eligible forwarding validators.
+          default: []
+          items: { $ref: '#/components/schemas/Pubkey' }
 result:
   name: signature
   summary: Base-58 signature of the submitted transaction.
@@ -37,7 +42,20 @@ examples:
     result:
       name: signature
       value: "5j7sZ3h5xKk9NqYyVVEaVFWuXGKRyuiz5ZvM8QW5goFJ5Yzx6N9fP5qDqDtwaENmJ3wYJ8Bwdz3KznipwHtQpJQm"
+  - name: with-forwarding-policy
+    summary: Restrict scheduled leader forwarding with a Yellowstone Shield policy.
+    params:
+      - name: transaction
+        value: "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+      - name: config
+        value:
+          encoding: base64
+          skipPreflight: true
+          forwardingPolicies: ["4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T"]
+    result:
+      name: signature
+      value: "5j7sZ3h5xKk9NqYyVVEaVFWuXGKRyuiz5ZvM8QW5goFJ5Yzx6N9fP5qDqDtwaENmJ3wYJ8Bwdz3KznipwHtQpJQm"
 implementations:
-  agave: { status: full }
+  agave: { status: partial, notes: "does not implement forwardingPolicies" }
   cloudbreak: { status: none }
   superbank: { status: none }
