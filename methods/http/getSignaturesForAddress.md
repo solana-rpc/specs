@@ -72,7 +72,7 @@ node with transaction history disabled entirely fails every call with
 ## Implementation notes
 
 - [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4293-L4325).
-- **superbank**: served from ClickHouse.
+- [**Superbank**](../../implementations/superbank.md): served from ClickHouse.
   - Parses `commitment` as a raw lowercased string and accepts only
     `confirmed` and `finalized` (plus `processed` as a vendor extension when
     the gRPC head cache is enabled). Agave, by contrast, deserializes the
@@ -82,4 +82,3 @@ node with transaction history disabled entirely fails every call with
     and maximum limit are env-tunable; the shipped default is 1000.
   - Offers vendor `beforeSlot` / `untilSlot` slot cursors alongside the
     signature cursors. They are outside this spec.
-- **cloudbreak**: method not served (account-state RPC only).

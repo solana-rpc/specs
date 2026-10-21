@@ -25,5 +25,5 @@ is expressed as a JSON-RPC error rather than a result value.
   `data.numSlotsBehind: null`.
 - **cloudbreak** reads a health flag maintained by its indexer; while a
   snapshot is loading, all slot-gated methods also fail with -32005.
-- **superbank** reports healthy iff it can resolve a latest finalized slot
+- [**Superbank**](../../implementations/superbank.md) reports healthy iff it can resolve a latest finalized slot
   from storage; `data.numSlotsBehind` is always `null`.
