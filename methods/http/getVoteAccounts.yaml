@@ -1,0 +1,54 @@
+name: getVoteAccounts
+status: standard
+summary: Returns current and delinquent validator vote accounts.
+params:
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        votePubkey: { $ref: '#/components/schemas/Pubkey' }
+        keepUnstakedDelinquents:
+          type: boolean
+          description: Include delinquent validators with no active stake. Default false.
+        delinquentSlotDistance:
+          $ref: '#/components/schemas/U64'
+result:
+  name: voteAccounts
+  summary: Current and delinquent vote accounts.
+  schema:
+    type: object
+    required: [current, delinquent]
+    properties:
+      current:
+        type: array
+        items: { $ref: '#/components/schemas/VoteAccountInfo' }
+      delinquent:
+        type: array
+        items: { $ref: '#/components/schemas/VoteAccountInfo' }
+examples:
+  - name: one-current-validator
+    summary: One current vote account and no delinquent accounts.
+    params:
+      - name: config
+        value: { commitment: finalized, votePubkey: "Vote111111111111111111111111111111111111111" }
+    result:
+      name: voteAccounts
+      value:
+        current:
+          - votePubkey: "Vote111111111111111111111111111111111111111"
+            nodePubkey: "FYjHNoFtSQ4V6hWgkRiiYWqQ9fV2YQwq9K4XJ3HhQx8Z"
+            activatedStake: 500000000000
+            commission: 5
+            inflationRewardsCommissionBps: 500
+            epochVoteAccount: true
+            epochCredits: [[700, 12345, 12000]]
+            lastVote: 250000120
+            rootSlot: 250000090
+        delinquent: []
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "available only when Vote and Stake programs are indexed; commitment is accepted but ignored; unavailable and not-ready errors are product-local" }
+  superbank: { status: none }

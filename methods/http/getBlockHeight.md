@@ -15,5 +15,6 @@ envelope.
 
 ## Implementation notes
 
-- **superbank**: `processed` requires the `grpc-head-cache` build feature.
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L2950-L2957).
+- [**Superbank**](../../implementations/superbank.md): `processed` requires the `grpc-head-cache` build feature and an enabled, configured head cache.
 - **cloudbreak**: method not served.

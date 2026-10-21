@@ -1,0 +1,27 @@
+name: rootUnsubscribe
+status: standard
+summary: Cancel a rootSubscribe subscription.
+params:
+  - name: subscriptionId
+    required: true
+    summary: Identifier returned by rootSubscribe on this connection.
+    schema: { $ref: '#/components/schemas/U64' }
+result:
+  name: success
+  summary: True when the subscription is cancelled.
+  schema: { type: boolean }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: basic
+    summary: Cancel a subscription.
+    params:
+      - name: subscriptionId
+        value: 1
+    result:
+      name: success
+      value: true
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }

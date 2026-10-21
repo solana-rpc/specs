@@ -7,7 +7,6 @@ params:
     summary: Transaction signatures to look up, in result order.
     schema:
       type: array
-      minItems: 1
       maxItems: 256
       items: { $ref: '#/components/schemas/Signature' }
   - name: config
@@ -15,11 +14,12 @@ params:
     summary: Configuration object.
     schema:
       type: object
-      required: [searchTransactionHistory]
       properties:
         searchTransactionHistory:
           type: boolean
           description: Search finalized transaction history when the recent-status cache has no entry.
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
 result:
   name: signatureStatuses
   summary: A status or null for every requested signature, in an RpcResponse envelope.
@@ -48,14 +48,23 @@ result:
                   description: >-
                     Transaction execution result, as {"Ok": null} or
                     {"Err": TransactionError}.
-                  type: object
-                  minProperties: 1
-                  maxProperties: 1
+                  oneOf:
+                    - title: Ok
+                      type: object
+                      required: [Ok]
+                      properties:
+                        Ok: { type: 'null' }
+                    - title: Err
+                      type: object
+                      required: [Err]
+                      properties:
+                        Err: { $ref: '#/components/schemas/TransactionError' }
                 confirmationStatus: { $ref: '#/components/schemas/ConfirmationStatus' }
             - type: 'null'
               description: The node has no status for this signature at the requested search scope.
 errors:
   - $ref: '#/components/errors/TransactionHistoryNotAvailable'
+  - $ref: '#/components/errors/MinContextSlotNotReached'
   - $ref: '#/components/errors/InvalidParams'
 examples:
   - name: recent-and-unknown
@@ -95,5 +104,4 @@ examples:
             confirmationStatus: finalized
 implementations:
   agave: { status: full }
-  cloudbreak: { status: none }
-  superbank: { status: partial, notes: "historical lookup is ClickHouse-backed; default context is finalized unless grpc-head-cache is enabled; malformed signatures yield null entries instead of InvalidParams" }
+  superbank: { status: partial, notes: "commitment and minContextSlot are not supported; historical lookup is ClickHouse-backed; default context is finalized unless grpc-head-cache is enabled; empty input is rejected; malformed signatures yield null entries instead of InvalidParams" }

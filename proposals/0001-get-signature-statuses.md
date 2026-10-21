@@ -4,7 +4,9 @@ title: Specify getSignatureStatuses
 authors: [Triton One]
 status: draft
 created: 2026-09-02
-reference-implementations: [https://github.com/solana-rpc/superbank/blob/0a77db6fb01191c771994b71e1d7b6ed8500aeca/crates/superbank-rpc/src/handlers/signatures.rs]
+reference-implementations:
+  - https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L1686-L1787
+  - https://github.com/solana-rpc/superbank/blob/0a77db6fb01191c771994b71e1d7b6ed8500aeca/crates/superbank-rpc/src/handlers/signatures.rs#L49-L379
 ---
 
 # Specify getSignatureStatuses
@@ -19,7 +21,7 @@ Clients use this method to determine whether submitted transactions have landed.
 
 ## Specification
 
-Add `methods/http/getSignatureStatuses.yaml` and `methods/http/getSignatureStatuses.md`. The method accepts one to 256 signatures and an optional `searchTransactionHistory` configuration object. It returns an `RpcResponse` whose value has one status or null entry per input signature. The specification defines recent-cache and finalized-history search behavior.
+Add `methods/http/getSignatureStatuses.yaml` and `methods/http/getSignatureStatuses.md`. The method accepts up to 256 signatures and an optional configuration object with `searchTransactionHistory`, `commitment`, and `minContextSlot`. It returns an `RpcResponse` whose value has one status or null entry per input signature. The specification defines recent-cache and finalized-history search behavior.
 
 ## Return-type impact
 
@@ -27,11 +29,12 @@ Adds an `RpcResponse` containing an array of nullable signature-status objects.
 
 ## Compatibility
 
-Agave conforms. Superbank v0.6.0-rc1 implements the method from cache tiers and ClickHouse history, with the documented malformed-signature and default-context differences. Cloudbreak does not serve the method. This is additive for clients.
+Agave conforms. Superbank v0.6.0-rc1 implements the method from cache tiers and ClickHouse history, with the documented configuration, empty-input, malformed-signature, and default-context differences. This is additive for clients.
 
 ## Reference implementation
 
-Superbank v0.6.0-rc1 ships the implementation at https://github.com/solana-rpc/superbank/blob/0a77db6fb01191c771994b71e1d7b6ed8500aeca/crates/superbank-rpc/src/handlers/signatures.rs.
+- [Agave request processor](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L1686-L1787)
+- [Superbank v0.6.0-rc1 handler](https://github.com/solana-rpc/superbank/blob/0a77db6fb01191c771994b71e1d7b6ed8500aeca/crates/superbank-rpc/src/handlers/signatures.rs#L49-L379)
 
 ## Security considerations
 
