@@ -2,6 +2,9 @@
 
 [Richat](https://github.com/lamports-dev/richat) is a streaming server that consumes Geyser data and exposes Solana PubSub over WebSocket as an alternative to the Agave RPC PubSub service.
 
+> [!WARNING]
+> Richat is currently unmaintained. Evaluate its maintenance status and operational risk before using it in production.
+
 This page records the source-reviewed surface at Richat revision [`45e8df4`](https://github.com/lamports-dev/richat/tree/45e8df4c674d14c7e81c17a30740e31271ee31a7). `Full` means the reviewed source accepts the standard request and produces the standard notification shape. `Partial` identifies a client-visible difference from the specified Agave behavior. This is a static source review, not a live conformance result.
 
 ## Compatibility
