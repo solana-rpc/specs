@@ -12,6 +12,8 @@ are NOT specced here — they enter the standard via the RFC process
 
 Deviations are recorded per method and summarized in the implementation profiles. 
 
+The [HTTP RPC method overview](methods/README.md) compares method availability across Agave, Cloudbreak, and Superbank. It also tracks this repository's method-page coverage against the Solana Foundation documentation.
+
 ## Layout
 
 | Path | Contents |
@@ -62,8 +64,7 @@ npm test           # tooling unit tests
 
 ## Status
 
-Seeded with a representative subset of methods. Remaining Agave HTTP methods
-and WebSocket subscriptions are being backfilled.
+The HTTP overview accounts for all 53 methods in the Solana Foundation documentation. This repository has normative method pages for 48 of them. The remaining HTTP method pages and WebSocket subscriptions are being backfilled.
 
 ## License
 
