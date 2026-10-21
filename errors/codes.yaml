@@ -53,12 +53,6 @@ SendTransactionPreflightFailure:
 TransactionSignatureVerificationFailure:
   code: -32003
   message: Transaction signature verification failure
-  description: >-
-    Code collision warning: cloudbreak reuses -32003 with a different meaning —
-    it returns this code to signal that the requested `processed` commitment is
-    not supported. Consumers that dispatch on the numeric code alone must
-    account for both meanings; the implementation matrix on each method records
-    which behavior applies.
 BlockNotAvailable:
   code: -32004
   message: "Block not available for slot {slot}"
