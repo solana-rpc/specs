@@ -1,0 +1,119 @@
+name: transactionSubscribe
+status: standard
+summary: Subscribe to transactions that match a filter.
+params:
+  - name: filter
+    required: true
+    summary: Transaction fields and account keys to match.
+    schema:
+      type: object
+      properties:
+        vote:
+          type: boolean
+          description: Match vote transactions when true and non-vote transactions when false.
+        failed:
+          type: boolean
+          description: Match failed transactions when true and successful transactions when false.
+        signature:
+          allOf:
+            - $ref: '#/components/schemas/Signature'
+          description: Match exactly this transaction signature.
+        accounts:
+          type: object
+          properties:
+            include:
+              type: array
+              items: { $ref: '#/components/schemas/Pubkey' }
+              description: Match when at least one listed key occurs in the transaction.
+            exclude:
+              type: array
+              items: { $ref: '#/components/schemas/Pubkey' }
+              description: Reject when any listed key occurs in the transaction.
+            required:
+              type: array
+              items: { $ref: '#/components/schemas/Pubkey' }
+              description: Match only when every listed key occurs in the transaction.
+  - name: config
+    required: false
+    summary: Commitment and transaction encoding options.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        encoding: { $ref: '#/components/schemas/TransactionEncoding' }
+        transactionDetails:
+          type: string
+          enum: [full, accounts, signatures, none]
+          description: Transaction detail to include. Defaults to `full`.
+        showRewards:
+          type: boolean
+          description: Whether to include reward metadata. Defaults to false.
+        maxSupportedTransactionVersion:
+          description: Highest transaction version the caller can decode.
+          allOf:
+            - $ref: '#/components/schemas/U8'
+result:
+  name: subscriptionId
+  summary: Identifier for this connection's subscription.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: accountTransactions
+    summary: Subscribe to successful transactions that include an account.
+    params:
+      - name: filter
+        value:
+          failed: false
+          accounts:
+            include: ['11111111111111111111111111111111']
+      - name: config
+        value: { commitment: confirmed, encoding: base64, transactionDetails: full, maxSupportedTransactionVersion: 0 }
+    result:
+      name: subscriptionId
+      value: 1
+notification:
+  name: transactionNotification
+  description: A transaction that matches this subscription.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription: { $ref: '#/components/schemas/U64' }
+      result:
+        type: object
+        required: [context, value]
+        properties:
+          context: { $ref: '#/components/schemas/RpcResponseContext' }
+          value:
+            type: object
+            required: [slot]
+            properties:
+              slot: { $ref: '#/components/schemas/Slot' }
+              signature:
+                allOf:
+                  - $ref: '#/components/schemas/Signature'
+                description: Present when `transactionDetails` is `signatures`.
+              transaction:
+                allOf:
+                  - $ref: '#/components/schemas/EncodedTransactionWithStatusMeta'
+                description: Present after successful encoding when `transactionDetails` is `full` or `accounts`.
+              error:
+                description: Present instead of `transaction` when transaction encoding fails.
+                oneOf:
+                  - title: UnsupportedTransactionVersion
+                    type: object
+                    required: [UnsupportedTransactionVersion]
+                    properties:
+                      UnsupportedTransactionVersion: { $ref: '#/components/schemas/U8' }
+                  - title: Parse
+                    type: object
+                    required: [Parse]
+                    properties:
+                      Parse: { type: string }
+implementations:
+  agave: { status: none }
+  cloudbreak: { status: none }
+  richat: { status: full, notes: "disabled by default; enable_transaction_subscription must be set" }
+  superbank: { status: none }
