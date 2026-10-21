@@ -29,7 +29,23 @@ returned.
 
 ## Exact-slot lookup
 
-The optional `config.slot` restricts the lookup to one exact slot. It lets a caller that already knows a transaction's slot avoid an implementation's general signature lookup. The signature remains the primary lookup key. If the signature is absent from `slot`, the result is `null`, even when that signature exists in another slot.
+The optional `config.slot` is an exact lookup constraint, not an advisory hint.
+When supplied, it MUST be an unsigned 64-bit integer (0 through 2^64-1).
+Negative, fractional, string and boolean values are invalid. Omitting the field
+preserves the ordinary signature lookup; the canonical request schema does not
+accept `null` for this field.
+
+A successful non-null result MUST match both the requested signature and slot.
+If that signature is absent from the requested slot, the result is `null`, even
+when it exists in another slot. A caller can use this constraint to avoid a
+broader signature search, but no particular storage strategy is required.
+Slot zero is a valid constraint. An unavailable transaction at the requested
+commitment still returns `null`; backend failures retain their normal errors
+and MUST NOT be translated into proof of absence.
+
+This field does not change commitment, encoding, version gating or the result
+shape. The defaults remain finalized commitment and JSON encoding. JSON clients
+must preserve integer precision when sending slots above 2^53-1.
 
 ## Result members
 
@@ -68,6 +84,10 @@ the config object are ignored by the reference implementation.
   - Accepts only `encoding`, `commitment`, `maxSupportedTransactionVersion`,
     and `slot`; any other config member is rejected with -32602, where Agave
     would ignore it. Its `slot` lookup is an exact signature-and-slot query.
+  - At the [reference release](https://github.com/solana-rpc/superbank/blob/0a77db6fb01191c771994b71e1d7b6ed8500aeca/crates/superbank-rpc/src/handlers/transactions.rs#L67-L100),
+    omitted and `null` slot values are both treated as absent. This tolerance
+    is not required by the canonical request schema; see proposal 0011.
+    Matching cache entries may answer before the storage query.
   - Rejects the all-ones signature
     (`1111111111111111111111111111111111111111111111111111111111111111`) as an
     invalid signature rather than looking it up.
@@ -78,5 +98,5 @@ the config object are ignored by the reference implementation.
   - Supports transaction v1 (SIMD-0385) when the request sends
     `maxSupportedTransactionVersion: 1`; JSON encodings then report
     `version: 1` and expose `message.transactionConfig`.
-- [**Agave**](../../implementations/agave.md): implements the base method but not the `slot` extension. The pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4279-L4291) ignores `slot` as an unknown config member and performs the normal signature lookup.
+- [**Agave**](https://github.com/solana-rpc/specs/blob/60f4c2fed5b5e23f2b1ed4063f9498489a349a93/implementations/agave.md): implements the base method but not the `slot` extension. The pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4279-L4291) ignores `slot` as an unknown config member and performs the normal signature lookup.
 - **cloudbreak**: method not served (account-state RPC only).
