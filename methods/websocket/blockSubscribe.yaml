@@ -51,22 +51,27 @@ notification:
       subscription: { $ref: '#/components/schemas/U64' }
       result:
         type: object
-        required: [slot, block, err]
+        required: [context, value]
         properties:
-          slot: { $ref: '#/components/schemas/Slot' }
-          block:
-            oneOf:
-              - { $ref: '#/components/schemas/UiConfirmedBlock' }
-              - type: 'null'
-          err:
-            oneOf:
-              - type: string
-                enum: [BlockStoreError]
-              - type: object
-                required: [UnsupportedTransactionVersion]
-                properties:
-                  UnsupportedTransactionVersion: { $ref: '#/components/schemas/U8' }
-              - type: 'null'
+          context: { $ref: '#/components/schemas/RpcResponseContext' }
+          value:
+            type: object
+            required: [slot, block, err]
+            properties:
+              slot: { $ref: '#/components/schemas/Slot' }
+              block:
+                oneOf:
+                  - { $ref: '#/components/schemas/UiConfirmedBlock' }
+                  - type: 'null'
+              err:
+                oneOf:
+                  - type: string
+                    enum: [BlockStoreError]
+                  - type: object
+                    required: [UnsupportedTransactionVersion]
+                    properties:
+                      UnsupportedTransactionVersion: { $ref: '#/components/schemas/U8' }
+                  - type: 'null'
 implementations:
   agave: { status: full }
   cloudbreak: { status: none }
