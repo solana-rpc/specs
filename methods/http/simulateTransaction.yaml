@@ -4,7 +4,7 @@ summary: Simulates a transaction without submitting it to the cluster.
 params:
   - name: transaction
     required: true
-    summary: Encoded signed transaction.
+    summary: Encoded serialized transaction.
     schema: { type: string, minLength: 1 }
   - name: config
     required: false
@@ -150,5 +150,4 @@ examples:
           loadedAddresses: { writable: [], readonly: [] }
 implementations:
   agave: { status: full }
-  cloudbreak: { status: partial, notes: "available only on a full unfiltered index; processed is rejected or downgraded; minContextSlot error payload differs; reconstructed runtime state needs live conformance testing" }
-  superbank: { status: none }
+  cloudbreak: { status: partial, notes: "available only on a full unfiltered index; processed is rejected or downgraded; reconstructed runtime state matched Agave in 14 of 16 live cases; two InvalidParams messages differ" }

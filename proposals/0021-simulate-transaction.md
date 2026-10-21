@@ -4,7 +4,9 @@ title: Specify simulateTransaction
 authors: [Triton One]
 status: draft
 created: 2026-09-07
-reference-implementations: [https://github.com/solana-rpc/cloudbreak/blob/2dfa7dc286d014f503ea201402a838577bf7702b/crates/api/src/methods/simulate_transaction.rs]
+reference-implementations:
+  - https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4070-L4227
+  - https://github.com/solana-rpc/cloudbreak/blob/4b2f28e40b0c984538a57874c4bac3697fccaaec/crates/api/src/methods/simulate_transaction.rs#L71-L300
 ---
 
 # Specify simulateTransaction
@@ -27,11 +29,12 @@ Adds the simulation result object and its nullable logs, accounts, resource tota
 
 ## Compatibility
 
-Agave conforms. Cloudbreak implements the method only on a full unfiltered account index and reconstructs a runtime view from indexed state. It rejects or downgrades `processed`, and its min-context error payload differs from Agave. Superbank does not serve the method. This is additive.
+Agave conforms. Cloudbreak implements the method only on a full unfiltered account index and reconstructs a runtime view from indexed state. It rejects or downgrades `processed`. Its min-context error payload matches Agave, and 14 of 16 live corpus cases were byte-identical. The other two use the standard `InvalidParams` code with different message text. This is additive.
 
 ## Reference implementation
 
-Cloudbreak at `2dfa7dc` ships the implementation at https://github.com/solana-rpc/cloudbreak/blob/2dfa7dc286d014f503ea201402a838577bf7702b/crates/api/src/methods/simulate_transaction.rs.
+- [Agave request handler and processor](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4070-L4227)
+- [Cloudbreak at `4b2f28e`](https://github.com/solana-rpc/cloudbreak/blob/4b2f28e40b0c984538a57874c4bac3697fccaaec/crates/api/src/methods/simulate_transaction.rs#L71-L300)
 
 ## Security considerations
 
