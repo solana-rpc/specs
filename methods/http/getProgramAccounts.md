@@ -51,6 +51,7 @@ bare base58 string rather than a `[data, encoding]` tuple.
 
 ## Implementation notes
 
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3482-L3504).
 - **cloudbreak**:
   - accepts but **ignores** `sortResults` — results come back in database
     order regardless of the value passed.

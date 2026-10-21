@@ -24,7 +24,7 @@ should read that list.
 | Path | Contents |
 |---|---|
 | `methods/http/`, `methods/websocket/` | One `<method>.yaml` (machine-readable schema) + `<method>.md` (normative prose) per method |
-| `implementations/` | Implementation profiles and compatibility summaries |
+| `implementations/` | Per-implementation compatibility and source-reference profiles |
 | `schemas/` | Shared JSON Schema components, one per file |
 | `errors/codes.yaml` | Canonical error-code registry |
 | `proposals/` | RFC proposal documents |
