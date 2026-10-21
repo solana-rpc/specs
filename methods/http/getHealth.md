@@ -19,11 +19,11 @@ is expressed as a JSON-RPC error rather than a result value.
 
 ## Implementation notes
 
-- **Agave** defines healthy as being within `health_check_slot_distance` of
+- [**Agave**](../../implementations/agave.md)'s pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L2924-L2936) defines healthy as being within `health_check_slot_distance` of
   the cluster's latest optimistically confirmed slot. When the node cannot
   tell how far behind it is, it still errors with -32005 and
   `data.numSlotsBehind: null`.
 - **cloudbreak** reads a health flag maintained by its indexer; while a
   snapshot is loading, all slot-gated methods also fail with -32005.
-- **superbank** reports healthy iff it can resolve a latest finalized slot
+- [**Superbank**](../../implementations/superbank.md) reports healthy iff it can resolve a latest finalized slot
   from storage; `data.numSlotsBehind` is always `null`.

@@ -1,0 +1,19 @@
+name: getGenesisHash
+status: standard
+summary: Returns the cluster genesis hash.
+params: []
+result:
+  name: genesisHash
+  summary: Base58-encoded genesis hash.
+  schema: { $ref: '#/components/schemas/Hash' }
+examples:
+  - name: genesis-hash
+    summary: Genesis hash of a cluster.
+    params: []
+    result:
+      name: genesisHash
+      value: "EtWTRABZaYq6iMfeYKouRu166VU2xqa1"
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: full, notes: "returned from configured cluster identity" }
+  superbank: { status: none }

@@ -1,0 +1,26 @@
+title: VoteAccountInfo
+description: Validator vote-account state and active stake.
+type: object
+required: [votePubkey, nodePubkey, activatedStake, commission, epochVoteAccount, epochCredits, lastVote, rootSlot]
+properties:
+  votePubkey: { $ref: '#/components/schemas/Pubkey' }
+  nodePubkey: { $ref: '#/components/schemas/Pubkey' }
+  activatedStake: { $ref: '#/components/schemas/U64' }
+  commission: { $ref: '#/components/schemas/U8' }
+  inflationRewardsCommissionBps:
+    type: integer
+    minimum: 0
+    maximum: 65535
+  epochVoteAccount: { type: boolean }
+  epochCredits:
+    type: array
+    items:
+      type: array
+      minItems: 3
+      maxItems: 3
+      items:
+        - $ref: '#/components/schemas/U64'
+        - $ref: '#/components/schemas/U64'
+        - $ref: '#/components/schemas/U64'
+  lastVote: { $ref: '#/components/schemas/Slot' }
+  rootSlot: { $ref: '#/components/schemas/Slot' }
