@@ -83,4 +83,4 @@ examples:
       value: [null]
 implementations:
   agave: { status: full }
-  superbank: { status: partial, notes: "confirmed/finalized only; payout boundary and partition availability can return -32004 or -32017; default address limit is 100; epoch math uses configured genesis or a no-warmup production fallback" }
+  superbank: { status: partial, notes: "confirmed/finalized only; rewards available for every indexed epoch; default address limit is 100; epoch math uses configured genesis or a no-warmup production fallback" }

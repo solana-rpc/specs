@@ -13,7 +13,7 @@ reference-implementations:
 
 ## Summary
 
-Add the HTTP `getInflationReward` method with its Agave request, reward result, availability errors, and implementation support matrix. Record Superbank's shipped ClickHouse behavior and its availability and epoch-schedule limits.
+Add the HTTP `getInflationReward` method with its Agave request, reward result, errors, and implementation support matrix. Record Superbank's shipped ClickHouse behavior and its epoch-schedule limits.
 
 ## Motivation
 
@@ -21,7 +21,7 @@ Superbank implements this standard Agave method, but the repository does not cur
 
 ## Specification
 
-Add `methods/http/getInflationReward.yaml` and `methods/http/getInflationReward.md`. The method accepts an address array and an optional epoch configuration object. It returns one reward object or `null` per address, preserving input order. The specification documents Agave's boundary and partition availability errors and records Superbank as partial because it rejects processed commitment, enforces stricter config and address limits, and depends on a matching cluster epoch schedule.
+Add `methods/http/getInflationReward.yaml` and `methods/http/getInflationReward.md`. The method accepts an address array and an optional epoch configuration object. It returns one reward object or `null` per address, preserving input order. The Agave implementation notes document its boundary and partition availability errors. Superbank serves every indexed epoch and remains partial because it rejects processed commitment, enforces stricter config and address limits, and depends on a matching cluster epoch schedule.
 
 ## Return-type impact
 
