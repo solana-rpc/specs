@@ -19,13 +19,9 @@ is expressed as a JSON-RPC error rather than a result value.
 
 ## Implementation notes
 
-- **Agave** defines healthy as being within `health_check_slot_distance` of
+- [**Agave**](../../implementations/agave.md)'s pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L2924-L2936) defines healthy as being within `health_check_slot_distance` of
   the cluster's latest optimistically confirmed slot. When the node cannot
   tell how far behind it is, it still errors with -32005 and
   `data.numSlotsBehind: null`.
-- [**Cloudbreak**](../../implementations/cloudbreak.md) reads a health flag
-  maintained by its indexer. While a snapshot is loading, account methods use
-  the health gate, but `getSlot` does not. The reviewed unhealthy response is
-  InternalError (-32603) with null `data`, not NodeUnhealthy (-32005).
-- **superbank** reports healthy iff it can resolve a latest finalized slot
-  from storage; `data.numSlotsBehind` is always `null`.
+- [**Cloudbreak**](../../implementations/cloudbreak.md) reads a health flag maintained by its indexer. An unhealthy node returns -32005 with `data.numSlotsBehind: null`. Account and token methods use the same health gate, while `getSlot` and `getBalance` remain available.
+- [**Superbank**](../../implementations/superbank.md) reports healthy iff it can resolve a latest finalized slot from storage; `data.numSlotsBehind` is always `null`.

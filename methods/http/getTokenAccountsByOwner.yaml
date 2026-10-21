@@ -96,5 +96,5 @@ examples:
         value: []
 implementations:
   agave: { status: full }
-  cloudbreak: { status: partial, notes: "delegate matching supports SPL Token and Token-2022; minContextSlot is accepted but not enforced; programId is restricted to those programs; final ordering is not guaranteed across paths" }
+  cloudbreak: { status: partial, notes: "delegate matching supports SPL Token and Token-2022; minContextSlot and pubkey-ascending order are enforced; programId and mint ownership are restricted to those programs; native processed is unsupported" }
   superbank: { status: none }

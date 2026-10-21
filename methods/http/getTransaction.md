@@ -60,7 +60,8 @@ the config object are ignored by the reference implementation.
 
 ## Implementation notes
 
-- **superbank**:
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L4279-L4291).
+- [**Superbank**](../../implementations/superbank.md):
   - Accepts only `encoding`, `commitment`, `maxSupportedTransactionVersion`,
     plus a vendor `slot` hint that is **not** part of this spec; any other
     config member is rejected with -32602, where Agave would ignore it.
@@ -74,4 +75,3 @@ the config object are ignored by the reference implementation.
   - Supports transaction v1 (SIMD-0385) when the request sends
     `maxSupportedTransactionVersion: 1`; JSON encodings then report
     `version: 1` and expose `message.transactionConfig`.
-- **cloudbreak**: method not served (account-state RPC only).

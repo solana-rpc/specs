@@ -37,7 +37,5 @@ variant.
 
 ## Implementation notes
 
-- [**Cloudbreak**](../../implementations/cloudbreak.md): rejects `processed`
-  (-32003) or downgrades it. Its method-specific default encoding matches
-  Agave. Source review suggests that a `jsonParsed` token account whose mint
-  row is missing falls back to unparsed encoding, but this needs a live test.
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3340-L3351).
+- [**Cloudbreak**](../../implementations/cloudbreak.md): the optional `processed-accounts` module serves native `processed`; other deployments reject it or serve confirmed state according to policy. Its default encoding and standard errors match Agave. On a filtered index, an account owned by an excluded program returns `value: null`. Source review shows that a `jsonParsed` token account whose mint row is missing falls back to the base64 tuple.

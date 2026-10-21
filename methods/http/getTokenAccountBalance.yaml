@@ -1,0 +1,53 @@
+name: getTokenAccountBalance
+status: standard
+summary: Returns the balance of an SPL Token account.
+params:
+  - name: pubkey
+    required: true
+    summary: Address of the token account.
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+result:
+  name: tokenAmount
+  summary: Token balance, in an RpcResponse envelope.
+  schema:
+    type: object
+    required: [context, value]
+    properties:
+      context: { $ref: '#/components/schemas/RpcResponseContext' }
+      value:
+        type: object
+        required: [amount, decimals, uiAmount, uiAmountString]
+        properties:
+          amount: { type: string, pattern: '^[0-9]+$' }
+          decimals: { $ref: '#/components/schemas/U8' }
+          uiAmount:
+            oneOf:
+              - type: number
+              - type: 'null'
+          uiAmountString: { type: string }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+examples:
+  - name: balance
+    summary: Balance of a token account with two decimals.
+    params:
+      - name: pubkey
+        value: "48gpnn8nsmkvkgso7462Z1nFhUrprGQ71u1YLBPzizbY"
+      - name: config
+        value: { commitment: finalized }
+    result:
+      name: tokenAmount
+      value:
+        context: { slot: 1114, apiVersion: "2.3.0" }
+        value: { amount: "9864", decimals: 2, uiAmount: 98.64, uiAmountString: "98.64" }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: partial, notes: "SPL Token and Token-2022 supported; processed rejected or downgraded; missing or excluded index data uses Cloudbreak-specific errors" }
+  superbank: { status: none }

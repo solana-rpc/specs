@@ -13,10 +13,10 @@ bare integer — this method does **not** use the RpcResponse context envelope.
 
 ## Implementation notes
 
-- [**Cloudbreak**](../../implementations/cloudbreak.md) rejects `processed`
-  commitment by default with -32003 or serves confirmed state when configured
-  to downgrade it.
-- **superbank** rejects `processed` commitment by default with -32602 unless
-  built with the `grpc-head-cache` feature and configured with a head cache.
+- [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L2945-L2948).
+- [**Cloudbreak**](../../implementations/cloudbreak.md) serves native `processed` with the optional `processed-accounts` module. Other deployments reject it or serve confirmed state according to policy. Min-context failures match Agave.
+- [**Superbank**](../../implementations/superbank.md) rejects `processed`
+  commitment by default with -32602. It accepts `processed` when built with
+  the `grpc-head-cache` feature and configured with an enabled head cache.
 - Database-backed implementations approximate commitment from stored slot
   status rather than live bank state.
