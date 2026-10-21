@@ -15,5 +15,4 @@ envelope.
 
 ## Implementation notes
 
-- **superbank**: `processed` requires the `grpc-head-cache` build feature.
-- **cloudbreak**: method not served.
+- [**Superbank**](../../implementations/superbank.md): `processed` requires the `grpc-head-cache` build feature and an enabled, configured head cache.
