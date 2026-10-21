@@ -1,0 +1,31 @@
+name: rootSubscribe
+status: standard
+summary: Subscribe to new root slots.
+params: []
+result:
+  name: subscriptionId
+  summary: Identifier for this connection's subscription.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: basic
+    summary: Create the subscription.
+    params: []
+    result:
+      name: subscriptionId
+      value: 1
+notification:
+  name: rootNotification
+  description: Notification payload sent for this subscription.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription: { $ref: '#/components/schemas/U64' }
+      result:
+        { $ref: '#/components/schemas/Slot' }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }

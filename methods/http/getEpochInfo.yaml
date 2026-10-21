@@ -1,0 +1,41 @@
+name: getEpochInfo
+status: standard
+summary: Returns information about the current epoch.
+params:
+  - name: config
+    required: false
+    summary: Commitment configuration.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: epochInfo
+  summary: Epoch, slot, block height, and optional transaction count.
+  schema:
+    type: object
+    required: [epoch, slotIndex, slotsInEpoch, absoluteSlot, blockHeight, transactionCount]
+    properties:
+      epoch: { $ref: '#/components/schemas/U64' }
+      slotIndex: { $ref: '#/components/schemas/U64' }
+      slotsInEpoch: { $ref: '#/components/schemas/U64' }
+      absoluteSlot: { $ref: '#/components/schemas/Slot' }
+      blockHeight: { $ref: '#/components/schemas/U64' }
+      transactionCount:
+        oneOf:
+          - { $ref: '#/components/schemas/U64' }
+          - { type: 'null' }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+examples:
+  - name: current-epoch
+    summary: Epoch information at finalized commitment.
+    params: []
+    result:
+      name: epochInfo
+      value: { epoch: 500, slotIndex: 1234, slotsInEpoch: 432000, absoluteSlot: 216001234, blockHeight: 215900000, transactionCount: 300000000000 }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
