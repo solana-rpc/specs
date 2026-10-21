@@ -29,7 +29,7 @@ Add the `InflationReward` result object with required `epoch`, `effectiveSlot`, 
 
 ## Compatibility
 
-This is an additive specification change. Agave conforms to the baseline. Superbank implements the method with the documented partial behavior. Cloudbreak does not serve it.
+This is an additive specification change. Agave conforms to the baseline. Superbank implements the method with the documented partial behavior.
 
 ## Reference implementation
 
