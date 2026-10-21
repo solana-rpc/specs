@@ -1,0 +1,24 @@
+name: getIdentity
+status: standard
+summary: Returns the node identity public key.
+params:
+  []
+result:
+  name: identity
+  summary: Node identity.
+  schema:
+    type: object
+    required: [identity]
+    properties:
+      identity: { $ref: '#/components/schemas/Pubkey' }
+examples:
+  - name: node-identity
+    summary: Identity of the serving node.
+    params: []
+    result:
+      name: identity
+      value: { identity: "83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri" }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }

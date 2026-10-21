@@ -1,0 +1,37 @@
+name: getTransactionCount
+status: standard
+summary: Returns the number of transactions processed by the bank at the requested commitment.
+params:
+  - name: config
+    required: false
+    summary: Configuration object.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: transactionCount
+  summary: Transaction count. Bare integer, no context envelope.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+examples:
+  - name: basic
+    summary: Default (`finalized`) commitment.
+    params: []
+    result:
+      name: transactionCount
+      value: 123456789
+  - name: confirmed-with-minimum-context
+    summary: Count at confirmed commitment after slot 123456700 is available.
+    params:
+      - name: config
+        value: { commitment: confirmed, minContextSlot: 123456700 }
+    result:
+      name: transactionCount
+      value: 123456789
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: partial, notes: "ClickHouse-backed; processed requires grpc-head-cache; rejects unknown config fields that Agave ignores" }
