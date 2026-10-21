@@ -56,4 +56,3 @@ Subscriptions are scoped to their WebSocket connection. Closing the connection c
 ## Implementation notes
 
 - [**Richat**](https://github.com/lamports-dev/richat) implements this method behind `enable_transaction_subscription`. See the pinned [request parser](https://github.com/lamports-dev/richat/blob/45e8df4c674d14c7e81c17a30740e31271ee31a7/richat/src/pubsub/solana.rs#L333-L393), [filter](https://github.com/lamports-dev/richat/blob/45e8df4c674d14c7e81c17a30740e31271ee31a7/richat/src/pubsub/filter.rs#L38-L85), and [notification encoder](https://github.com/lamports-dev/richat/blob/45e8df4c674d14c7e81c17a30740e31271ee31a7/richat/src/pubsub/notification.rs#L130-L201).
-- Agave, Cloudbreak, and Superbank do not expose this method.
