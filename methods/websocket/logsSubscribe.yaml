@@ -1,0 +1,69 @@
+name: logsSubscribe
+status: standard
+summary: Subscribe to transaction log messages.
+params:
+  - name: filter
+    required: true
+    summary: "A transaction-log filter: all, allWithVotes, or one mentions address."
+    schema:
+      oneOf:
+        - type: string
+          enum: [all, allWithVotes]
+        - type: object
+          required: [mentions]
+          properties:
+            mentions:
+              type: array
+              minItems: 1
+              maxItems: 1
+              items: { $ref: '#/components/schemas/Pubkey' }
+  - name: config
+    required: false
+    summary: Commitment configuration.
+    schema:
+      type: object
+      properties:
+        commitment: { $ref: '#/components/schemas/Commitment' }
+result:
+  name: subscriptionId
+  summary: Identifier for this connection's subscription.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: basic
+    summary: Create the subscription.
+    params:
+      - name: filter
+        value: all
+    result:
+      name: subscriptionId
+      value: 1
+notification:
+  name: logsNotification
+  description: Notification payload sent for this subscription.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription: { $ref: '#/components/schemas/U64' }
+      result:
+        type: object
+        required: [context, value]
+        properties:
+          context: { $ref: '#/components/schemas/RpcResponseContext' }
+          value:
+            type: object
+            required: [signature, err, logs]
+            properties:
+              signature: { $ref: '#/components/schemas/Signature' }
+              err:
+                oneOf:
+                  - $ref: '#/components/schemas/TransactionError'
+                  - type: 'null'
+              logs: { type: array, items: { type: string } }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
