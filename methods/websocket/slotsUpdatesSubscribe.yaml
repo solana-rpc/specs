@@ -1,0 +1,39 @@
+name: slotsUpdatesSubscribe
+status: standard
+summary: Subscribe to lifecycle updates for slots.
+params: []
+result:
+  name: subscriptionId
+  summary: Identifier for this connection's subscription.
+  schema: { $ref: '#/components/schemas/U64' }
+errors:
+  - $ref: '#/components/errors/InternalError'
+examples:
+  - name: basic
+    summary: Create the subscription.
+    params: []
+    result:
+      name: subscriptionId
+      value: 1
+notification:
+  name: slotsUpdatesNotification
+  description: Notification payload sent for this subscription.
+  schema:
+    type: object
+    required: [subscription, result]
+    properties:
+      subscription: { $ref: '#/components/schemas/U64' }
+      result:
+        type: object
+        required: [type, slot, timestamp]
+        properties:
+          type: { type: string, enum: [firstShredReceived, completed, createdBank, frozen, dead, optimisticConfirmation, root] }
+          slot: { $ref: '#/components/schemas/Slot' }
+          parent: { $ref: '#/components/schemas/Slot' }
+          timestamp: { $ref: '#/components/schemas/U64' }
+          err: { type: string }
+          stats: { type: object }
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
