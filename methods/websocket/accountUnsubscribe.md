@@ -12,5 +12,6 @@ error response, never `false`.
 ## Implementation notes
 
 - [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc_pubsub.rs#L448-L450).
+- [**Richat**](../../implementations/richat.md): alternative implementation.
 
 Neither cloudbreak nor superbank serves WebSocket subscriptions.

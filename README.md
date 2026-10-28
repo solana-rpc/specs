@@ -3,7 +3,7 @@
 Implementation-independent specification of the Solana JSON-RPC API.
 
 The baseline is the Agave RPC implementation; the spec additionally records
-how other implementations (cloudbreak, superbank) support or deviate from
+how other implementations (cloudbreak, richat, superbank) support or deviate from
 standard behavior, MDN-compatibility-table style. Vendor-specific extensions
 are NOT specced here — they enter the standard via the RFC process
 (see [GOVERNANCE.md](GOVERNANCE.md)).
