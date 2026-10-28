@@ -35,7 +35,4 @@ form independently of the other entries.
 ## Implementation notes
 
 - [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3354-L3379).
-- **cloudbreak**: the input cap is configurable via `max-multiple-accounts`
-  (default 100); default encoding is `base64`. `processed` commitment is
-  rejected (-32003) or downgraded.
-- **superbank**: method not served.
+- [**Cloudbreak**](../../implementations/cloudbreak.md): the input cap is configurable via `max-multiple-accounts` (default 100), and the default encoding is `base64`. The optional `processed-accounts` module serves native `processed`; other deployments reject it or serve confirmed state according to policy. Min-context and oversized-base58 errors match Agave. On a filtered index, accounts owned by excluded programs return `null` entries.

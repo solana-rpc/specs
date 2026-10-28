@@ -3,20 +3,16 @@
 Implementation-independent specification of the Solana JSON-RPC API.
 
 The baseline is the Agave RPC implementation; the spec additionally records
-how other implementations (cloudbreak, superbank) support or deviate from
+how other implementations (cloudbreak, richat, superbank) support or deviate from
 standard behavior, MDN-compatibility-table style. Vendor-specific extensions
 are NOT specced here — they enter the standard via the RFC process
 (see [GOVERNANCE.md](GOVERNANCE.md)).
 
 ### Implementation notes
 
-Deviations are recorded per method, but one is cross-cutting and worth knowing
-up front: **cloudbreak does not reproduce Agave's error payloads.** Its
-JSON-RPC `message` field carries an opaque SNAKE_CASE token (e.g.
-`PROCESSED_COMMITMENT_NOT_SUPPORTED`) rather than Agave's interpolated message,
-and its error `data` is always `null` — even for codes where this spec
-documents a `data` schema. Clients that parse Agave's message text or read
-`data` fields must special-case cloudbreak.
+Deviations are recorded per method and summarized in the implementation profiles. 
+
+The [HTTP RPC method overview](methods/README.md) compares method availability across Agave, Cloudbreak, and Superbank. It also tracks this repository's method-page coverage against the Solana Foundation documentation.
 
 ## Layout
 
@@ -68,8 +64,7 @@ npm test           # tooling unit tests
 
 ## Status
 
-Seeded with a representative subset of methods. Remaining Agave HTTP methods
-and WebSocket subscriptions are being backfilled.
+The HTTP overview accounts for all 53 methods in the Solana Foundation documentation. This repository has normative method pages for 48 of them. The remaining HTTP method pages and WebSocket subscriptions are being backfilled.
 
 ## License
 

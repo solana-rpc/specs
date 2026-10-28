@@ -23,7 +23,5 @@ is expressed as a JSON-RPC error rather than a result value.
   the cluster's latest optimistically confirmed slot. When the node cannot
   tell how far behind it is, it still errors with -32005 and
   `data.numSlotsBehind: null`.
-- **cloudbreak** reads a health flag maintained by its indexer; while a
-  snapshot is loading, all slot-gated methods also fail with -32005.
-- [**Superbank**](../../implementations/superbank.md) reports healthy iff it can resolve a latest finalized slot
-  from storage; `data.numSlotsBehind` is always `null`.
+- [**Cloudbreak**](../../implementations/cloudbreak.md) reads a health flag maintained by its indexer. An unhealthy node returns -32005 with `data.numSlotsBehind: null`. Account and token methods use the same health gate, while `getSlot` and `getBalance` remain available.
+- [**Superbank**](../../implementations/superbank.md) reports healthy iff it can resolve a latest finalized slot from storage; `data.numSlotsBehind` is always `null`.

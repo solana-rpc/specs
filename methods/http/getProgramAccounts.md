@@ -52,19 +52,10 @@ bare base58 string rather than a `[data, encoding]` tuple.
 ## Implementation notes
 
 - [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L3482-L3504).
-- **cloudbreak**:
-  - accepts but **ignores** `sortResults` — results come back in database
-    order regardless of the value passed.
-  - restricts gPA against SPL Token / Token-2022 to queries shaped like
-    `getTokenAccountsByOwner` / `getTokenAccountsByDelegate` (owner or
-    delegate memcmp) or filtered by mint; anything else is rejected with
-    -32602.
+- [**Cloudbreak**](../../implementations/cloudbreak.md):
+  - accepts but ignores `sortResults`; every SQL and cache path returns pubkeys in ascending order.
+  - restricts gPA against SPL Token / Token-2022 to queries shaped like `getTokenAccountsByOwner` / `getTokenAccountsByDelegate` (owner or delegate memcmp) or filtered by mint; anything else is rejected with -32602.
   - returns -32010 for programs outside its indexer's configured filter set.
-  - enforces `minContextSlot` **only** when `withContext: true`; with the
-    bare-array shape the parameter is accepted and ignored.
-  - streams the response body. A database error that occurs mid-stream
-    truncates the JSON already on the wire instead of producing a JSON-RPC
-    error object, so clients must treat a parse failure as a possible
-    server-side error rather than a malformed spec response.
-  - rejects `processed` commitment (-32003) or downgrades it.
-- **superbank**: method not served (history-only RPC).
+  - enforces `minContextSlot` on every accepted result shape.
+  - sends one response batch by default, so a database error produces a complete JSON-RPC error. An operator can enable batched streaming; a later failure then aborts the connection.
+  - rejects `processed` commitment or serves confirmed state according to the deployment policy.

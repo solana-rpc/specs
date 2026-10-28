@@ -18,9 +18,4 @@ requested commitment level.
 ## Implementation notes
 
 - [**Agave**](../../implementations/agave.md): baseline implementation. See the pinned [request handler](https://github.com/anza-xyz/agave/blob/6dd9d38771e46103b9680357a855804165612602/rpc/src/rpc.rs#L2898-L2907).
-- **cloudbreak**: rejects `processed` commitment with -32003
-  `PROCESSED_COMMITMENT_NOT_SUPPORTED` (or silently downgrades to `confirmed`
-  when configured). Returns a non-standard error (-32010
-  `ACCOUNT_OWNER_EXCLUDED`) when the account exists but its owner program is
-  not indexed.
-- **superbank**: method not served (history-only RPC).
+- [**Cloudbreak**](../../implementations/cloudbreak.md): the optional `processed-accounts` module serves native `processed`; other deployments reject it or serve confirmed state according to policy. `minContextSlot` failures match Agave. On a filtered index, an account owned by an excluded program returns `0` because the row is absent.
