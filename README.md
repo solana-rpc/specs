@@ -41,7 +41,7 @@ may ignore without losing structural validity.
 | Extension | Location | Contents |
 |---|---|---|
 | `x-solana-status` | each method | `standard` or `deprecated`. A deprecated method also sets the standard `deprecated: true` flag. |
-| `x-solana-implementations` | each method | Support matrix keyed by implementation (`agave`, `cloudbreak`, `superbank`), each with a `status` (`full`, `partial`, `none`) and optional `notes`. |
+| `x-solana-implementations` | each method | Support matrix keyed by implementation (`agave`, `cloudbreak`, `richat`, `superbank`), each with a `status` (`full`, `partial`, `none`) and optional `notes`. |
 | `x-notification` | `*Subscribe` methods | The `{name, schema}` of the notification the subscription pushes — OpenRPC has no native notion of a server-initiated message, so the subscribe method's own `result` is only the subscription id. |
 | `x-solana-errors` | document root | Map keyed by error **name** carrying `dataSchema`, `emittedBy`, and `description` for that error. |
 
