@@ -34,6 +34,6 @@ notification:
           err: { type: string }
           stats: { type: object }
 implementations:
-  agave: { status: full }
+  agave: { status: deprecated, notes: "Implements the full method contract. Agave WebSocket PubSub support is deprecated; use a dedicated WebSocket implementation." }
   cloudbreak: { status: none }
   superbank: { status: none }
