@@ -56,6 +56,6 @@ notification:
           context: { $ref: '#/components/schemas/RpcResponseContext' }
           value: { $ref: '#/components/schemas/RpcKeyedAccount' }
 implementations:
-  agave: { status: full }
+  agave: { status: deprecated, notes: "Implements the full method contract. Agave WebSocket PubSub support is deprecated; use a dedicated WebSocket implementation." }
   cloudbreak: { status: none }
   superbank: { status: none }

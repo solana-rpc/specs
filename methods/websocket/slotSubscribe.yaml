@@ -31,6 +31,6 @@ notification:
           parent: { $ref: '#/components/schemas/Slot' }
           root: { $ref: '#/components/schemas/Slot' }
 implementations:
-  agave: { status: full }
+  agave: { status: deprecated, notes: "Implements the full method contract. Agave WebSocket PubSub support is deprecated; use a dedicated WebSocket implementation." }
   cloudbreak: { status: none }
   superbank: { status: none }
