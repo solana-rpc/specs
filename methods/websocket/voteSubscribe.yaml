@@ -34,6 +34,6 @@ notification:
           timestamp: { oneOf: [{ $ref: '#/components/schemas/I64' }, { type: 'null' }] }
           signature: { $ref: '#/components/schemas/Signature' }
 implementations:
-  agave: { status: full }
+  agave: { status: deprecated, notes: "Implements the full method contract when the validator runs with --rpc-pubsub-enable-vote-subscription. Agave WebSocket PubSub support is deprecated; use a dedicated WebSocket implementation." }
   cloudbreak: { status: none }
   superbank: { status: none }
