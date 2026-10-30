@@ -1,0 +1,41 @@
+name: getAgGenesisCert
+status: standard
+summary: Returns the finalized Alpenglow genesis certificate, if present.
+params:
+  []
+result:
+  name: certificate
+  summary: Alpenglow genesis certificate, or null when unavailable.
+  schema:
+    oneOf:
+      - type: object
+        required: [block, signature]
+        properties:
+          block:
+            type: object
+            required: [slot, blockId]
+            properties:
+              slot: { $ref: '#/components/schemas/Slot' }
+              blockId: { $ref: '#/components/schemas/Hash' }
+          signature:
+            type: object
+            required: [signature, bitmap]
+            properties:
+              signature:
+                type: array
+                items: { $ref: '#/components/schemas/U8' }
+              bitmap:
+                type: array
+                items: { $ref: '#/components/schemas/U8' }
+      - type: 'null'
+examples:
+  - name: absent-certificate
+    summary: A cluster without a finalized genesis certificate.
+    params: []
+    result:
+      name: certificate
+      value: null
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
