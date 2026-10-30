@@ -1,0 +1,43 @@
+name: sendTransaction
+status: standard
+summary: Submits a signed serialized transaction for processing.
+params:
+  - name: transaction
+    required: true
+    summary: Base58 or base64 encoded serialized transaction.
+    schema: { type: string, minLength: 1 }
+  - name: config
+    required: false
+    summary: Preflight, encoding, retry, and context configuration.
+    schema:
+      type: object
+      properties:
+        skipPreflight: { type: boolean, default: false }
+        preflightCommitment: { $ref: '#/components/schemas/Commitment' }
+        encoding: { type: string, enum: [base58, base64] }
+        maxRetries: { type: integer, minimum: 0 }
+        minContextSlot: { $ref: '#/components/schemas/Slot' }
+result:
+  name: signature
+  summary: Base-58 signature of the submitted transaction.
+  schema: { $ref: '#/components/schemas/Signature' }
+errors:
+  - $ref: '#/components/errors/InvalidParams'
+  - $ref: '#/components/errors/NodeUnhealthy'
+  - $ref: '#/components/errors/SendTransactionPreflightFailure'
+  - $ref: '#/components/errors/MinContextSlotNotReached'
+examples:
+  - name: base64-without-preflight
+    summary: Submit a base64 serialized transaction with preflight skipped.
+    params:
+      - name: transaction
+        value: "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+      - name: config
+        value: { encoding: base64, skipPreflight: true, maxRetries: 0 }
+    result:
+      name: signature
+      value: "5j7sZ3h5xKk9NqYyVVEaVFWuXGKRyuiz5ZvM8QW5goFJ5Yzx6N9fP5qDqDtwaENmJ3wYJ8Bwdz3KznipwHtQpJQm"
+implementations:
+  agave: { status: full }
+  cloudbreak: { status: none }
+  superbank: { status: none }
