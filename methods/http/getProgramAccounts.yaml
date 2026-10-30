@@ -97,3 +97,151 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: partial, notes: "sortResults ignored; token-program gPA restricted; minContextSlot only enforced with withContext:true" }
   superbank: { status: none }
+
+category: Accounts
+tests:
+  - name: withContext-false
+    params:
+      - $fixture: sysvarProgram
+      - encoding: base64
+        filters:
+          - dataSize: 40
+        withContext: false
+        dataSlice:
+          offset: 0
+          length: 0
+    expect:
+      shape:
+        type: array
+      available:
+        minItems: 1
+      result:
+        type: array
+        items:
+          type: object
+          required:
+            - account
+          properties:
+            account:
+              type: object
+              required:
+                - owner
+                - data
+              properties:
+                owner:
+                  const:
+                    $fixture: sysvarProgram
+                data:
+                  const:
+                    - ""
+                    - base64
+                space:
+                  enum:
+                    - 40
+                    - null
+  - name: withContext-true
+    params:
+      - $fixture: sysvarProgram
+      - encoding: base64
+        filters:
+          - dataSize: 40
+        withContext: true
+        dataSlice:
+          offset: 0
+          length: 0
+    expect:
+      shape:
+        type: object
+      available:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            minItems: 1
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: array
+            items:
+              type: object
+              required:
+                - account
+              properties:
+                account:
+                  type: object
+                  required:
+                    - owner
+                    - data
+                  properties:
+                    owner:
+                      const:
+                        $fixture: sysvarProgram
+                    data:
+                      const:
+                        - ""
+                        - base64
+                    space:
+                      enum:
+                        - 40
+                        - null
+  - name: too-many-filters
+    params:
+      - $fixture: sysvarProgram
+      - filters:
+          - dataSize: 40
+          - dataSize: 40
+          - dataSize: 40
+          - dataSize: 40
+          - dataSize: 40
+    expect:
+      error: InvalidParams
+  - name: missing-required-params
+    params: []
+    expect:
+      error: InvalidParams
+  - name: invalid-base58
+    params:
+      - not-a-base58-key!
+      - encoding: base64
+        filters:
+          - dataSize: 40
+        withContext: false
+        dataSlice:
+          offset: 0
+          length: 0
+    expect:
+      error: InvalidParams
+  - name: min-context-slot
+    params:
+      - $fixture: sysvarProgram
+      - encoding: base64
+        filters:
+          - dataSize: 40
+        withContext: false
+        dataSlice:
+          offset: 0
+          length: 0
+        minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached
+  - name: min-context-slot-with-context
+    params:
+      - $fixture: sysvarProgram
+      - encoding: base64
+        filters:
+          - dataSize: 40
+        withContext: true
+        dataSlice:
+          offset: 0
+          length: 0
+        minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached

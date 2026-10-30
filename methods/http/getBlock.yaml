@@ -98,3 +98,311 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: none }
   superbank: { status: partial, notes: "strict unknown-config-field rejection; processed n/a; served from ClickHouse" }
+
+category: Ledger
+tests:
+  - name: details-none-rewards-true
+    params:
+      - $fixture: slot
+      - transactionDetails: none
+        rewards: true
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        allOf:
+          - required:
+              - rewards
+          - not:
+              required:
+                - transactions
+          - not:
+              required:
+                - signatures
+  - name: details-none-rewards-false
+    params:
+      - $fixture: slot
+      - transactionDetails: none
+        rewards: false
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        allOf:
+          - not:
+              required:
+                - rewards
+          - not:
+              required:
+                - transactions
+          - not:
+              required:
+                - signatures
+  - name: details-signatures-rewards-true
+    params:
+      - $fixture: slot
+      - transactionDetails: signatures
+        rewards: true
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        allOf:
+          - required:
+              - rewards
+          - not:
+              required:
+                - transactions
+          - required:
+              - signatures
+  - name: details-signatures-rewards-false
+    params:
+      - $fixture: slot
+      - transactionDetails: signatures
+        rewards: false
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        allOf:
+          - not:
+              required:
+                - rewards
+          - not:
+              required:
+                - transactions
+          - required:
+              - signatures
+  - name: details-accounts-rewards-true
+    params:
+      - $fixture: slot
+      - transactionDetails: accounts
+        rewards: true
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        allOf:
+          - required:
+              - rewards
+          - required:
+              - transactions
+          - not:
+              required:
+                - signatures
+          - properties:
+              transactions:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - transaction
+                  properties:
+                    transaction:
+                      not:
+                        required:
+                          - message
+  - name: details-accounts-rewards-false
+    params:
+      - $fixture: slot
+      - transactionDetails: accounts
+        rewards: false
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        allOf:
+          - not:
+              required:
+                - rewards
+          - required:
+              - transactions
+          - not:
+              required:
+                - signatures
+          - properties:
+              transactions:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - transaction
+                  properties:
+                    transaction:
+                      not:
+                        required:
+                          - message
+  - name: details-full-rewards-true
+    params:
+      - $fixture: slot
+      - transactionDetails: full
+        rewards: true
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        allOf:
+          - required:
+              - rewards
+          - required:
+              - transactions
+          - not:
+              required:
+                - signatures
+  - name: details-full-rewards-false
+    params:
+      - $fixture: slot
+      - transactionDetails: full
+        rewards: false
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        not:
+          type: "null"
+      result:
+        allOf:
+          - not:
+              required:
+                - rewards
+          - required:
+              - transactions
+          - not:
+              required:
+                - signatures
+  - name: encoding-base64
+    params:
+      - $fixture: slot
+      - encoding: base64
+        rewards: false
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        type: object
+        required:
+          - transactions
+        properties:
+          transactions:
+            minItems: 1
+      result:
+        type: object
+        required:
+          - transactions
+        properties:
+          transactions:
+            type: array
+            items:
+              type: object
+              required:
+                - transaction
+              properties:
+                transaction:
+                  type: array
+                  items:
+                    - type: string
+                    - const: base64
+                  minItems: 2
+                  maxItems: 2
+  - name: encoding-base58
+    params:
+      - $fixture: slot
+      - encoding: base58
+        rewards: false
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        type: object
+        required:
+          - transactions
+        properties:
+          transactions:
+            minItems: 1
+      result:
+        type: object
+        required:
+          - transactions
+        properties:
+          transactions:
+            type: array
+            items:
+              type: object
+              required:
+                - transaction
+              properties:
+                transaction:
+                  type: array
+                  items:
+                    - type: string
+                    - const: base58
+                  minItems: 2
+                  maxItems: 2
+  - name: encoding-jsonParsed
+    params:
+      - $fixture: slot
+      - encoding: jsonParsed
+        rewards: false
+        maxSupportedTransactionVersion: 0
+    expect:
+      available:
+        type: object
+        required:
+          - transactions
+        properties:
+          transactions:
+            minItems: 1
+      result:
+        type: object
+        required:
+          - transactions
+        properties:
+          transactions:
+            type: array
+            items:
+              type: object
+              required:
+                - transaction
+              properties:
+                transaction:
+                  type: object
+                  required:
+                    - message
+                  properties:
+                    message:
+                      type: object
+                      required:
+                        - accountKeys
+                      properties:
+                        accountKeys:
+                          type: array
+                          items:
+                            type: object
+                meta:
+                  anyOf:
+                    - type: "null"
+                    - not:
+                        required:
+                          - loadedAddresses
+  - name: processed-rejected
+    params:
+      - $fixture: slot
+        default: 0
+      - commitment: processed
+    expect:
+      error: InvalidParams
+  - name: missing-required-params
+    params: []
+    expect:
+      error: InvalidParams

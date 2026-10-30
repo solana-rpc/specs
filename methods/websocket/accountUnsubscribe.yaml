@@ -25,3 +25,31 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: none }
   superbank: { status: none }
+
+category: Subscriptions
+tests:
+  - name: unsubscribe
+    params:
+      - $fixture: subscription
+    expect:
+      result:
+        const: true
+  - name: unknown-id
+    params:
+      - $fixture: subscription
+    expect:
+      error: InvalidParams
+      message: Invalid subscription id.
+testSetup:
+  - method: accountSubscribe
+    params:
+      - $fixture: clock
+      - encoding: base64
+        commitment: processed
+        dataSlice:
+          offset: 0
+          length: 0
+        minContextSlot:
+          $fixture: futureSlot
+    capture:
+      subscription: ""

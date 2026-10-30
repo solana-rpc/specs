@@ -1,0 +1,78 @@
+version: 1
+fixtures:
+  account:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+    value: SysvarC1ock11111111111111111111111111111111
+  clock:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+    value: SysvarC1ock11111111111111111111111111111111
+  sysvarProgram:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+    value: Sysvar1111111111111111111111111111111111111
+  nativeMint:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+    value: So11111111111111111111111111111111111111112
+  missingAccount:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+    generate: { bytes: 32 }
+  missingSignature:
+    schema: { $ref: '#/components/schemas/Signature' }
+    generate: { bytes: 64 }
+  futureSlot:
+    schema: { $ref: '#/components/schemas/Slot' }
+    value: 9007199254740991
+  tip:
+    schema: { $ref: '#/components/schemas/Slot' }
+  slot:
+    schema: { $ref: '#/components/schemas/Slot' }
+  signature:
+    schema: { $ref: '#/components/schemas/Signature' }
+  address:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  tokenOwner:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  tokenMint:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+  tokenProgram:
+    schema: { $ref: '#/components/schemas/Pubkey' }
+    value: TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA
+discovery:
+  - name: recent-ledger
+    provides: [slot, signature, address, tokenOwner, tokenMint, tokenProgram]
+    steps:
+      - name: finalized-tip
+        method: getSlot
+        params: [{ commitment: finalized }]
+        capture:
+          tip: { path: '' }
+          slot: { path: '', offset: -32 }
+      - name: recent-block-slots
+        method: getBlocks
+        params:
+          - { $fixture: tip, offset: -64 }
+          - { $fixture: tip, offset: -32 }
+          - { commitment: finalized }
+        capture:
+          slot: { path: /0 }
+      - name: recent-block
+        method: getBlock
+        params:
+          - { $fixture: slot, default: { $fixture: tip, offset: -32 } }
+          - { encoding: jsonParsed, maxSupportedTransactionVersion: 0, rewards: false }
+        capture:
+          signature: { path: /transactions/0/transaction/signatures/0 }
+          address: { path: /transactions/0/transaction/message/accountKeys/0/pubkey }
+          tokenOwner:
+            path: /transactions/*/meta/postTokenBalances/*
+            where: &tokenBalance
+              type: object
+              required: [owner, mint, programId]
+            field: /owner
+          tokenMint:
+            path: /transactions/*/meta/postTokenBalances/*
+            where: *tokenBalance
+            field: /mint
+          tokenProgram:
+            path: /transactions/*/meta/postTokenBalances/*
+            where: *tokenBalance
+            field: /programId

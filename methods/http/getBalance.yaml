@@ -53,3 +53,37 @@ implementations:
   agave: { status: full }
   cloudbreak: { status: partial, notes: "processed commitment rejected or downgraded; error if account owner not indexed" }
   superbank: { status: none }
+
+category: Accounts
+tests:
+  - name: existing-account
+    params:
+      - $fixture: account
+  - name: missing-account
+    params:
+      - $fixture: missingAccount
+    expect:
+      result:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            const: 0
+  - name: missing-required-params
+    params: []
+    expect:
+      error: InvalidParams
+  - name: invalid-base58
+    params:
+      - not-a-base58-key!
+    expect:
+      error: InvalidParams
+  - name: min-context-slot
+    params:
+      - $fixture: account
+      - minContextSlot:
+          $fixture: futureSlot
+    expect:
+      error: MinContextSlotNotReached
+      message: Minimum context slot has not been reached

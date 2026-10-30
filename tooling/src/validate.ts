@@ -5,6 +5,7 @@ import { loadSpec, type SpecSource } from './loader.js'
 import { collectRefs } from './refs.js'
 import { compileWithComponents } from './examples.js'
 import { buildDocument } from './build.js'
+import { checkCompatibility } from './compat/definition.js'
 
 export function validateSpec(root: string): string[] {
   const spec = loadSpec(root)
@@ -15,6 +16,7 @@ export function validateSpec(root: string): string[] {
     ...checkErrors(spec),
     ...checkMethodMetadata(spec),
     ...checkExamples(spec),
+    ...checkCompatibility(spec),
     ...checkOpenRpcDocument(spec),
   ]
 }
@@ -37,6 +39,7 @@ export function checkNames(spec: SpecSource): string[] {
 export function checkRefs(spec: SpecSource): string[] {
   const problems: string[] = []
   const sources: Array<[string, any]> = [
+    ['compatibility.yaml', spec.compatibility],
     ...spec.methods.map((m): [string, any] => [m.file, m.yaml]),
     ...Object.entries(spec.schemas).map(([n, s]): [string, any] => [`schemas/${n}.yaml`, s]),
     ...Object.entries(spec.errors).map(([n, e]): [string, any] => [`errors/codes.yaml#${n}`, e]),
