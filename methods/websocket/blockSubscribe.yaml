@@ -73,6 +73,6 @@ notification:
                       UnsupportedTransactionVersion: { $ref: '#/components/schemas/U8' }
                   - type: 'null'
 implementations:
-  agave: { status: full }
+  agave: { status: deprecated, notes: "Implements the full method contract when the validator runs with --rpc-pubsub-enable-block-subscription. Agave WebSocket PubSub support is deprecated; use a dedicated WebSocket implementation." }
   cloudbreak: { status: none }
   superbank: { status: none }
